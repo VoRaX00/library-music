@@ -1,4 +1,9 @@
+basePath: /
+host: localhost:8090
 info:
   contact: {}
+  description: API Server for Library music application
+  title: Library music API
+  version: "1.0"
 paths: {}
 swagger: "2.0"

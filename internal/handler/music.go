@@ -6,6 +6,16 @@ import (
 	"net/http"
 )
 
+// @Summary AddMusic
+// @Tags music
+// @Description create music
+// @ID create-music
+// @Accept json
+// @Produce json
+// @Param input body domain.Music true "music info"
+// @Success 200 {integer} integer 1
+// @Router /api/add [post]
+
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input domain.Music
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -24,6 +34,16 @@ func (h *Handler) AddMusic(c *gin.Context) {
 	})
 }
 
+// @Summary UpdateMusic
+// @Tags music
+// @Description update music
+// @ID update-music
+// @Accept json
+// @Produce json
+// @Param input body domain.Music true "music info"
+// @Success 200 {integer} integer 1
+// @Router /api/update [put]
+
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	var input domain.Music
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -41,6 +61,16 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	})
 }
 
+// @Summary DeleteMusic
+// @Tags music
+// @Description delete music
+// @ID delete-music
+// @Accept json
+// @Produce json
+// @Param song path string true "Song Name"
+// @Success 200 {integer} integer 1
+// @Router /api/delete [delete]
+
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	song := c.Param("song")
 	err := h.service.Delete(song)
@@ -53,6 +83,15 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	})
 }
 
+// @Summary GetAllMusic
+// @Tags music
+// @Description get all music
+// @ID get-all-music
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Router /api/getAll [get]
+
 func (h *Handler) GetMusicList(c *gin.Context) {
 	musics, err := h.service.GetAll()
 	if err != nil {
@@ -63,6 +102,16 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	})
 }
 
+// @Summary GetMusic
+// @Tags music
+// @Description get music
+// @ID get-music
+// @Accept json
+// @Produce json
+// @Param song path string true "Song Name"
+// @Success 200 {integer} integer 1
+// @Router /api/get [get]
+
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Param("song")
 	music, err := h.service.Get(song)
@@ -72,6 +121,16 @@ func (h *Handler) GetMusic(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, music)
 }
+
+// @Summary GetTextMusic
+// @Tags music
+// @Description get text music
+// @ID get-text-music
+// @Accept json
+// @Produce json
+// @Param song path string true "Song Name"
+// @Success 200 {integer} integer 1
+// @Router /api/getText [get]
 
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	song := c.Param("song")
