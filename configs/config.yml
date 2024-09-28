@@ -3,6 +3,6 @@ server:
 db:
   host: "localhost"
   port: "5431"
-  name: "library-music"
+  name: "library_music_db"
   username: "postgres"
   sslmode: "disable"
