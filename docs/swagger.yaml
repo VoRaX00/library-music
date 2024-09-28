@@ -1,9 +1,161 @@
 basePath: /
+definitions:
+  domain.Music:
+    properties:
+      group:
+        type: string
+      id:
+        type: string
+      link:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
 host: localhost:8090
 info:
   contact: {}
   description: API Server for Library music application
   title: Library music API
   version: "1.0"
-paths: {}
+paths:
+  /api/add:
+    post:
+      consumes:
+      - application/json
+      description: create music
+      operationId: create-music
+      parameters:
+      - description: music info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Music'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: AddMusic
+      tags:
+      - music
+  /api/delete/{song}:
+    delete:
+      consumes:
+      - application/json
+      description: delete music
+      operationId: delete-music
+      parameters:
+      - description: Song Name
+        in: path
+        name: song
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: DeleteMusic
+      tags:
+      - music
+  /api/get/{song}:
+    get:
+      consumes:
+      - application/json
+      description: get music
+      operationId: get-music
+      parameters:
+      - description: Song Name
+        in: path
+        name: song
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Music'
+      summary: GetMusic
+      tags:
+      - music
+  /api/getAll:
+    get:
+      consumes:
+      - application/json
+      description: get all music
+      operationId: get-all-music
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/domain.Music'
+            type: object
+      summary: GetAllMusic
+      tags:
+      - music
+  /api/getText/{song}:
+    get:
+      consumes:
+      - application/json
+      description: get text music
+      operationId: get-text-music
+      parameters:
+      - description: Song Name
+        in: path
+        name: song
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: GetTextMusic
+      tags:
+      - music
+  /api/update:
+    put:
+      consumes:
+      - application/json
+      description: update music
+      operationId: update-music
+      parameters:
+      - description: music info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Music'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: UpdateMusic
+      tags:
+      - music
 swagger: "2.0"

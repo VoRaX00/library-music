@@ -13,9 +13,8 @@ import (
 // @Accept json
 // @Produce json
 // @Param input body domain.Music true "music info"
-// @Success 200 {integer} integer 1
+// @Success 200 {object} map[string]string
 // @Router /api/add [post]
-
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input domain.Music
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -41,9 +40,8 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param input body domain.Music true "music info"
-// @Success 200 {integer} integer 1
+// @Success 200 {object} map[string]string
 // @Router /api/update [put]
-
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	var input domain.Music
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -68,9 +66,8 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param song path string true "Song Name"
-// @Success 200 {integer} integer 1
-// @Router /api/delete [delete]
-
+// @Success 200 {object} map[string]string
+// @Router /api/delete/{song} [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	song := c.Param("song")
 	err := h.service.Delete(song)
@@ -89,9 +86,8 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @ID get-all-music
 // @Accept json
 // @Produce json
-// @Success 200 {integer} integer 1
+// @Success 200 {object} map[string]domain.Music
 // @Router /api/getAll [get]
-
 func (h *Handler) GetMusicList(c *gin.Context) {
 	musics, err := h.service.GetAll()
 	if err != nil {
@@ -109,9 +105,8 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param song path string true "Song Name"
-// @Success 200 {integer} integer 1
-// @Router /api/get [get]
-
+// @Success 200 {object} domain.Music
+// @Router /api/get/{song} [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Param("song")
 	music, err := h.service.Get(song)
@@ -129,9 +124,8 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param song path string true "Song Name"
-// @Success 200 {integer} integer 1
-// @Router /api/getText [get]
-
+// @Success 200 {object} map[string]string
+// @Router /api/getText/{song} [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	song := c.Param("song")
 	text, err := h.service.GetText(song)
