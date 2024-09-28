@@ -13,7 +13,7 @@ func NewMusicService(repo *infrastructure.Repository) *MusicService {
 	return &MusicService{repo: repo}
 }
 
-func (s *MusicService) Add(music domain.Music) error {
+func (s *MusicService) Add(music domain.Music) (int, error) {
 	return s.repo.Add(music)
 }
 

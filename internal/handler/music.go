@@ -22,14 +22,14 @@ func (h *Handler) AddMusic(c *gin.Context) {
 		return
 	}
 
-	err := h.service.Add(input)
+	id, err := h.service.Add(input)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
+		"id": id,
 	})
 }
 
