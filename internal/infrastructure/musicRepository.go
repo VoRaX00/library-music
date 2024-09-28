@@ -31,6 +31,6 @@ func (r *MusicRepository) GetAll() ([]domain.Music, error) {
 	return nil, nil
 }
 
-func (r *MusicRepository) Get(song string) (string, error) {
-	return "", nil
+func (r *MusicRepository) Get(song string) (domain.Music, error) {
+	return domain.Music{}, nil
 }
