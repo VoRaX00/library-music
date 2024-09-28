@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"library-music/internal/application"
