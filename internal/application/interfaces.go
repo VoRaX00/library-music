@@ -7,5 +7,6 @@ type IMusicService interface {
 	Delete(song string) error
 	Update(music domain.Music) error
 	GetAll() ([]domain.Music, error)
+	Get(song string) (domain.Music, error)
 	GetText(song string) (string, error)
 }
