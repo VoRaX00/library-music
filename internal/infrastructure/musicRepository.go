@@ -23,7 +23,7 @@ func (r *MusicRepository) Delete(song string) error {
 	return nil
 }
 
-func (r *MusicRepository) Update(song string) error {
+func (r *MusicRepository) Update(music domain.Music) error {
 	return nil
 }
 

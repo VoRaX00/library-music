@@ -3,11 +3,11 @@ package application
 import "library-music/internal/infrastructure"
 
 type Service struct {
-	repos *infrastructure.Repository
+	IMusicService
 }
 
 func NewService(repos *infrastructure.Repository) *Service {
 	return &Service{
-		repos: repos,
+		IMusicService: NewMusicService(repos),
 	}
 }
