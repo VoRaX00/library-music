@@ -56,10 +56,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: create music
+      description: Create a new music
       operationId: create-music
       parameters:
-      - description: music info
+      - description: Music info to add
         in: body
         name: input
         required: true
@@ -74,19 +74,31 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: AddMusic
       tags:
       - music
-  /api/delete/{song}:
+  /api/delete:
     delete:
       consumes:
       - application/json
       description: delete music
       operationId: delete-music
       parameters:
-      - description: Song Name
+      - description: Song and group for delete
         in: body
-        name: song
+        name: input
         required: true
         schema:
           $ref: '#/definitions/domain.MusicToDelete'
@@ -99,30 +111,19 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: DeleteMusic
-      tags:
-      - music
-  /api/get/{song}:
-    get:
-      consumes:
-      - application/json
-      description: get music
-      operationId: get-music
-      parameters:
-      - description: Song Name
-        in: body
-        name: song
-        required: true
-        schema:
-          $ref: '#/definitions/domain.MusicToGet'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+        "400":
+          description: Bad Request
           schema:
-            $ref: '#/definitions/domain.Music'
-      summary: GetMusic
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: DeleteMusic
       tags:
       - music
   /api/getAll:
@@ -140,19 +141,25 @@ paths:
             additionalProperties:
               $ref: '#/definitions/domain.Music'
             type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: GetAllMusic
       tags:
       - music
-  /api/getText/{song}:
+  /api/getText:
     get:
       consumes:
       - application/json
       description: get text music
       operationId: get-text-music
       parameters:
-      - description: Song Name
+      - description: Song and group for get text
         in: body
-        name: song
+        name: input
         required: true
         schema:
           $ref: '#/definitions/domain.MusicToGet'
@@ -165,7 +172,54 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: GetTextMusic
+      tags:
+      - music
+  /api/info:
+    get:
+      consumes:
+      - application/json
+      description: get music
+      operationId: get-music
+      parameters:
+      - description: Song and group for get music
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.MusicToGet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Music'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: GetMusic
       tags:
       - music
   /api/update:
@@ -175,7 +229,7 @@ paths:
       description: update music
       operationId: update-music
       parameters:
-      - description: music info
+      - description: Music info to update
         in: body
         name: input
         required: true
@@ -186,6 +240,18 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string

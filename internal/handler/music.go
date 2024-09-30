@@ -8,12 +8,14 @@ import (
 
 // @Summary AddMusic
 // @Tags music
-// @Description create music
+// @Description Create a new music
 // @ID create-music
 // @Accept json
 // @Produce json
-// @Param input body domain.MusicToAdd true "music info"
+// @Param input body domain.MusicToAdd true "Music info to add"
 // @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input domain.MusicToAdd
@@ -39,8 +41,10 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @ID update-music
 // @Accept json
 // @Produce json
-// @Param input body domain.MusicToUpdate true "music info"
+// @Param input body domain.MusicToUpdate true "Music info to update"
 // @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	var input domain.MusicToUpdate
@@ -65,9 +69,11 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @ID delete-music
 // @Accept json
 // @Produce json
-// @Param song body domain.MusicToDelete true "Song Name"
+// @Param input body domain.MusicToDelete true "Song and group for delete"
 // @Success 200 {object} map[string]string
-// @Router /api/delete/{song} [delete]
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/delete [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	var input domain.MusicToDelete
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -93,6 +99,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} map[string]domain.Music
+// @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
 	musics, err := h.service.GetAll()
@@ -110,9 +117,11 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @ID get-music
 // @Accept json
 // @Produce json
-// @Param song body domain.MusicToGet true "Song Name"
+// @Param input body domain.MusicToGet true "Song and group for get music"
 // @Success 200 {object} domain.Music
-// @Router /api/get/{song} [get]
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	var input domain.MusicToGet
 
@@ -135,9 +144,11 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @ID get-text-music
 // @Accept json
 // @Produce json
-// @Param song body domain.MusicToGet true "Song Name"
+// @Param input body domain.MusicToGet true "Song and group for get text"
 // @Success 200 {object} map[string]string
-// @Router /api/getText/{song} [get]
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/getText [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	var input domain.MusicToGet
 

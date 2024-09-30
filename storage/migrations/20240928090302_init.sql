@@ -3,7 +3,7 @@
 CREATE TABLE music (
     id SERIAL PRIMARY KEY,
     music_group TEXT NOT NULL,
-    song TEXT NOT NULL UNIQUE ,
+    song TEXT NOT NULL,
     text_song TEXT NOT NULL,
     link TEXT
 );

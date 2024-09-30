@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/add": {
             "post": {
-                "description": "create music",
+                "description": "Create a new music",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,7 +31,7 @@ const docTemplate = `{
                 "operationId": "create-music",
                 "parameters": [
                     {
-                        "description": "music info",
+                        "description": "Music info to add",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -49,11 +49,29 @@ const docTemplate = `{
                                 "type": "string"
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/delete/{song}": {
+        "/api/delete": {
             "delete": {
                 "description": "delete music",
                 "consumes": [
@@ -69,8 +87,8 @@ const docTemplate = `{
                 "operationId": "delete-music",
                 "parameters": [
                     {
-                        "description": "Song Name",
-                        "name": "song",
+                        "description": "Song and group for delete",
+                        "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -87,40 +105,23 @@ const docTemplate = `{
                                 "type": "string"
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/api/get/{song}": {
-            "get": {
-                "description": "get music",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "music"
-                ],
-                "summary": "GetMusic",
-                "operationId": "get-music",
-                "parameters": [
-                    {
-                        "description": "Song Name",
-                        "name": "song",
-                        "in": "body",
-                        "required": true,
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.MusicToGet"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.Music"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -149,11 +150,20 @@ const docTemplate = `{
                                 "$ref": "#/definitions/domain.Music"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/getText/{song}": {
+        "/api/getText": {
             "get": {
                 "description": "get text music",
                 "consumes": [
@@ -169,8 +179,8 @@ const docTemplate = `{
                 "operationId": "get-text-music",
                 "parameters": [
                     {
-                        "description": "Song Name",
-                        "name": "song",
+                        "description": "Song and group for get text",
+                        "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -181,6 +191,77 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/info": {
+            "get": {
+                "description": "get music",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "music"
+                ],
+                "summary": "GetMusic",
+                "operationId": "get-music",
+                "parameters": [
+                    {
+                        "description": "Song and group for get music",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MusicToGet"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Music"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -207,7 +288,7 @@ const docTemplate = `{
                 "operationId": "update-music",
                 "parameters": [
                     {
-                        "description": "music info",
+                        "description": "Music info to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -219,6 +300,24 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
