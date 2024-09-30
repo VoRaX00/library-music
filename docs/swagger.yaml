@@ -132,6 +132,12 @@ paths:
       - application/json
       description: get all music
       operationId: get-all-music
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -157,6 +163,11 @@ paths:
       description: get text music
       operationId: get-text-music
       parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
       - description: Song and group for get text
         in: body
         name: input
@@ -194,6 +205,11 @@ paths:
       description: get music
       operationId: get-music
       parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
       - description: Song and group for get music
         in: body
         name: input

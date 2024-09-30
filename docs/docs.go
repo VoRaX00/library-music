@@ -141,6 +141,15 @@ const docTemplate = `{
                 ],
                 "summary": "GetAllMusic",
                 "operationId": "get-all-music",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -178,6 +187,13 @@ const docTemplate = `{
                 "summary": "GetTextMusic",
                 "operationId": "get-text-music",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "Song and group for get text",
                         "name": "input",
@@ -234,6 +250,13 @@ const docTemplate = `{
                 "summary": "GetMusic",
                 "operationId": "get-music",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "Song and group for get music",
                         "name": "input",

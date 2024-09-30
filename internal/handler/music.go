@@ -98,6 +98,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @ID get-all-music
 // @Accept json
 // @Produce json
+// @Param page query int true "Page number"
 // @Success 200 {object} map[string]domain.Music
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
@@ -117,6 +118,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @ID get-music
 // @Accept json
 // @Produce json
+// @Param page query int true "Page number"
 // @Param input body domain.MusicToGet true "Song and group for get music"
 // @Success 200 {object} domain.Music
 // @Failure 400 {object} map[string]string
@@ -144,6 +146,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @ID get-text-music
 // @Accept json
 // @Produce json
+// @Param page query int true "Page number"
 // @Param input body domain.MusicToGet true "Song and group for get text"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
