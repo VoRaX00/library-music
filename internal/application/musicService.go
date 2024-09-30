@@ -13,15 +13,15 @@ func NewMusicService(repo *infrastructure.Repository) *MusicService {
 	return &MusicService{repo: repo}
 }
 
-func (s *MusicService) Add(music domain.Music) (int, error) {
+func (s *MusicService) Add(music domain.MusicToAdd) (int, error) {
 	return s.repo.Add(music)
 }
 
-func (s *MusicService) Delete(song string) error {
-	return s.repo.Delete(song)
+func (s *MusicService) Delete(music domain.MusicToDelete) error {
+	return s.repo.Delete(music)
 }
 
-func (s *MusicService) Update(music domain.Music) error {
+func (s *MusicService) Update(music domain.MusicToUpdate) error {
 	return s.repo.Update(music)
 }
 
@@ -29,14 +29,14 @@ func (s *MusicService) GetAll() ([]domain.Music, error) {
 	return s.repo.GetAll()
 }
 
-func (s *MusicService) Get(song string) (domain.Music, error) {
+func (s *MusicService) Get(song domain.MusicToGet) (domain.Music, error) {
 	return s.repo.Get(song)
 }
 
-func (s *MusicService) GetText(song string) (string, error) {
-	music, err := s.repo.Get(song)
+func (s *MusicService) GetText(music domain.MusicToGet) (string, error) {
+	foundMusic, err := s.repo.Get(music)
 	if err != nil {
 		return "", err
 	}
-	return music.Text, nil
+	return foundMusic.Text, nil
 }

@@ -15,12 +15,11 @@ func NewMusicRepository(db *sqlx.DB) *MusicRepository {
 	}
 }
 
-func (r *MusicRepository) Add(music domain.Music) (int, error) {
+func (r *MusicRepository) Add(music domain.MusicToAdd) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return -1, err
 	}
-
 	var musicId int
 	query := "INSERT INTO music (music_group, song, text_song, link) values ($1, $2, $3, $4) RETURNING id"
 
@@ -33,14 +32,16 @@ func (r *MusicRepository) Add(music domain.Music) (int, error) {
 	return musicId, tx.Commit()
 }
 
-func (r *MusicRepository) Delete(song string) error {
+func (r *MusicRepository) Delete(music domain.MusicToDelete) error {
 	query := "DELETE FROM music WHERE song=$1"
-	_, err := r.db.Exec(query, song)
+	_, err := r.db.Exec(query, music.Song)
 	return err
 }
 
-func (r *MusicRepository) Update(music domain.Music) error {
-	return nil
+func (r *MusicRepository) Update(music domain.MusicToUpdate) error {
+	query := "UPDATE music SET music_group=$1, text_song=$2, link=$3 WHERE song=$4"
+	_, err := r.db.Exec(query, music.Group, music.Text, music.Link, music.Song)
+	return err
 }
 
 func (r *MusicRepository) GetAll() ([]domain.Music, error) {
@@ -52,9 +53,9 @@ func (r *MusicRepository) GetAll() ([]domain.Music, error) {
 	return musics, nil
 }
 
-func (r *MusicRepository) Get(song string) (domain.Music, error) {
-	var music domain.Music
-	query := "SELECT music_group, song, text_song, link FROM music WHERE song=$1"
-	err := r.db.Get(&music, query, song)
-	return music, err
+func (r *MusicRepository) Get(music domain.MusicToGet) (domain.Music, error) {
+	var foundMusic domain.Music
+	query := "SELECT id, music_group, song, text_song, link FROM music WHERE song=$1"
+	err := r.db.Get(&foundMusic, query, music.Song)
+	return foundMusic, err
 }

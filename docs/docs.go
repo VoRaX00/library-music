@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Music"
+                            "$ref": "#/definitions/domain.MusicToAdd"
                         }
                     }
                 ],
@@ -69,11 +69,13 @@ const docTemplate = `{
                 "operationId": "delete-music",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Song Name",
                         "name": "song",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MusicToDelete"
+                        }
                     }
                 ],
                 "responses": {
@@ -105,11 +107,13 @@ const docTemplate = `{
                 "operationId": "get-music",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Song Name",
                         "name": "song",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MusicToGet"
+                        }
                     }
                 ],
                 "responses": {
@@ -165,11 +169,13 @@ const docTemplate = `{
                 "operationId": "get-text-music",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Song Name",
                         "name": "song",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.MusicToGet"
+                        }
                     }
                 ],
                 "responses": {
@@ -206,7 +212,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Music"
+                            "$ref": "#/definitions/domain.MusicToUpdate"
                         }
                     }
                 ],
@@ -232,6 +238,56 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.MusicToAdd": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.MusicToDelete": {
+            "type": "object",
+            "properties": {
+                "song": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.MusicToGet": {
+            "type": "object",
+            "properties": {
+                "song": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.MusicToUpdate": {
+            "type": "object",
+            "properties": {
+                "group": {
                     "type": "string"
                 },
                 "link": {

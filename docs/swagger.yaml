@@ -13,6 +13,38 @@ definitions:
       text:
         type: string
     type: object
+  domain.MusicToAdd:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+  domain.MusicToDelete:
+    properties:
+      song:
+        type: string
+    type: object
+  domain.MusicToGet:
+    properties:
+      song:
+        type: string
+    type: object
+  domain.MusicToUpdate:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
 host: localhost:8090
 info:
   contact: {}
@@ -32,7 +64,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.Music'
+          $ref: '#/definitions/domain.MusicToAdd'
       produces:
       - application/json
       responses:
@@ -53,10 +85,11 @@ paths:
       operationId: delete-music
       parameters:
       - description: Song Name
-        in: path
+        in: body
         name: song
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/domain.MusicToDelete'
       produces:
       - application/json
       responses:
@@ -77,10 +110,11 @@ paths:
       operationId: get-music
       parameters:
       - description: Song Name
-        in: path
+        in: body
         name: song
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/domain.MusicToGet'
       produces:
       - application/json
       responses:
@@ -117,10 +151,11 @@ paths:
       operationId: get-text-music
       parameters:
       - description: Song Name
-        in: path
+        in: body
         name: song
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/domain.MusicToGet'
       produces:
       - application/json
       responses:
@@ -145,7 +180,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.Music'
+          $ref: '#/definitions/domain.MusicToUpdate'
       produces:
       - application/json
       responses:
