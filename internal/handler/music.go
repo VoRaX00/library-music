@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"library-music/internal/domain"
 	"net/http"
+	"strconv"
 )
 
 // @Summary AddMusic
@@ -92,6 +93,8 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	})
 }
 
+const pageSize = 5
+
 // @Summary GetAllMusic
 // @Tags music
 // @Description get all music
@@ -103,7 +106,13 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
-	musics, err := h.service.GetAll()
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	musics, err := h.service.GetAll(page)
 	if err != nil {
 		return
 	}
@@ -125,6 +134,11 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 	var input domain.MusicToGet
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -132,7 +146,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 		return
 	}
 
-	music, err := h.service.Get(input)
+	music, err := h.service.Get(input, page)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -153,6 +167,11 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/getText [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 	var input domain.MusicToGet
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -160,7 +179,7 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 		return
 	}
 
-	text, err := h.service.GetText(input)
+	text, err := h.service.GetText(input, page)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

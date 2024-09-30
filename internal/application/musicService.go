@@ -25,15 +25,15 @@ func (s *MusicService) Update(music domain.MusicToUpdate) error {
 	return s.repo.Update(music)
 }
 
-func (s *MusicService) GetAll() ([]domain.Music, error) {
+func (s *MusicService) GetAll(page int) ([]domain.Music, error) {
 	return s.repo.GetAll()
 }
 
-func (s *MusicService) Get(song domain.MusicToGet) (domain.Music, error) {
+func (s *MusicService) Get(song domain.MusicToGet, page int) (domain.Music, error) {
 	return s.repo.Get(song)
 }
 
-func (s *MusicService) GetText(music domain.MusicToGet) (string, error) {
+func (s *MusicService) GetText(music domain.MusicToGet, page int) (string, error) {
 	foundMusic, err := s.repo.Get(music)
 	if err != nil {
 		return "", err
