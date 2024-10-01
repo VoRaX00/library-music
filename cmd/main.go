@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	goose "github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"library-music/internal/application"
@@ -19,7 +20,6 @@ import (
 
 // @host localhost:8090
 // @BasePath /
-
 func main() {
 	logrus.SetFormatter(&logrus.TextFormatter{})
 	if err := initConfig(); err != nil {
@@ -40,6 +40,10 @@ func main() {
 	defer func() {
 		_ = db.Close()
 	}()
+
+	if err = goose.Up(db.DB, "./storage/migrations"); err != nil {
+		logrus.Fatalf("Error upgrading database: %v", err)
+	}
 
 	repos := infrastructure.NewRepository(db)
 	services := application.NewService(repos)

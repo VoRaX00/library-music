@@ -4,7 +4,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1324
+      POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: library-music
       PG_DATA: /var/lib/postgresql/data/
     ports:
