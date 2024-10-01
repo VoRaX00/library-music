@@ -4,9 +4,9 @@ import "library-music/internal/domain"
 
 type IMusicService interface {
 	Add(music domain.MusicToAdd) (int, error)
-	Delete(music domain.MusicToDelete) error
-	Update(music domain.MusicToUpdate) error
-	GetAll(page int) ([]domain.Music, error)
-	Get(music domain.MusicToGet, page int) (domain.Music, error)
-	GetText(music domain.MusicToGet, page int) (string, error)
+	Delete(id int) error
+	Update(music domain.MusicToUpdate, id int) error
+	GetAll(page int) ([]domain.MusicToGet, error)
+	Get(song, group string) (domain.MusicToGet, error)
+	GetText(song, group string, page int) (string, error)
 }

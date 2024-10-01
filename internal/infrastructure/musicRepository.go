@@ -32,30 +32,40 @@ func (r *MusicRepository) Add(music domain.MusicToAdd) (int, error) {
 	return musicId, tx.Commit()
 }
 
-func (r *MusicRepository) Delete(music domain.MusicToDelete) error {
-	query := "DELETE FROM music WHERE song=$1"
-	_, err := r.db.Exec(query, music.Song)
+func (r *MusicRepository) Delete(id int) error {
+	query := "DELETE FROM music WHERE id=$1"
+	_, err := r.db.Exec(query, id)
 	return err
 }
 
-func (r *MusicRepository) Update(music domain.MusicToUpdate) error {
-	query := "UPDATE music SET music_group=$1, text_song=$2, link=$3 WHERE song=$4"
-	_, err := r.db.Exec(query, music.Group, music.Text, music.Link, music.Song)
+func (r *MusicRepository) Update(music domain.MusicToUpdate, id int) error {
+	query := "UPDATE music SET song=$1, music_group=$2, text_song=$3, link=$4 WHERE id=$5"
+	_, err := r.db.Exec(query, music.Text, music.Link, music.Song, music.Group, id)
 	return err
 }
 
-func (r *MusicRepository) GetAll() ([]domain.Music, error) {
-	var musics []domain.Music
-	query := "SELECT music_group, song, text_song, link FROM music"
-	if err := r.db.Select(&musics, query); err != nil {
+const pageSize = 5
+
+func (r *MusicRepository) GetAll(page int) ([]domain.MusicToGet, error) {
+	var musics []domain.MusicToGet
+	query := "SELECT id, music_group, song, link FROM music LIMIT $1 OFFSET $2"
+	offset := (page - 1) * pageSize
+	if err := r.db.Select(&musics, query, pageSize, offset); err != nil {
 		return nil, err
 	}
 	return musics, nil
 }
 
-func (r *MusicRepository) Get(music domain.MusicToGet) (domain.Music, error) {
-	var foundMusic domain.Music
-	query := "SELECT id, music_group, song, text_song, link FROM music WHERE song=$1"
-	err := r.db.Get(&foundMusic, query, music.Song)
+func (r *MusicRepository) Get(song, group string) (domain.MusicToGet, error) {
+	var foundMusic domain.MusicToGet
+	query := "SELECT id, music_group, song, link FROM music WHERE song=$1 AND music_group=$2"
+	err := r.db.Get(&foundMusic, query, song, group)
 	return foundMusic, err
+}
+
+func (r *MusicRepository) GetText(song, group string) (string, error) {
+	var text string
+	query := "SELECT text_song FROM music WHERE song=$1 AND music_group=$2"
+	err := r.db.Get(&text, query, song, group)
+	return text, err
 }

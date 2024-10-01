@@ -5,7 +5,8 @@ CREATE TABLE music (
     music_group TEXT NOT NULL,
     song TEXT NOT NULL,
     text_song TEXT NOT NULL,
-    link TEXT
+    link TEXT,
+    CONSTRAINT unique_song_group UNIQUE (song, music_group)
 );
 -- +goose StatementEnd
 -- +goose Down

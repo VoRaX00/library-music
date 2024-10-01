@@ -5,7 +5,7 @@ definitions:
       group:
         type: string
       id:
-        type: string
+        type: integer
       link:
         type: string
       song:
@@ -22,16 +22,6 @@ definitions:
       song:
         type: string
       text:
-        type: string
-    type: object
-  domain.MusicToDelete:
-    properties:
-      song:
-        type: string
-    type: object
-  domain.MusicToGet:
-    properties:
-      song:
         type: string
     type: object
   domain.MusicToUpdate:
@@ -96,12 +86,11 @@ paths:
       description: delete music
       operationId: delete-music
       parameters:
-      - description: Song and group for delete
-        in: body
-        name: input
+      - description: Id song
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/domain.MusicToDelete'
+        type: integer
       produces:
       - application/json
       responses:
@@ -163,17 +152,21 @@ paths:
       description: get text music
       operationId: get-text-music
       parameters:
+      - description: Song name
+        in: query
+        name: song
+        required: true
+        type: string
+      - description: Music group
+        in: query
+        name: group
+        required: true
+        type: string
       - description: Page number
         in: query
         name: page
         required: true
         type: integer
-      - description: Song and group for get text
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/domain.MusicToGet'
       produces:
       - application/json
       responses:
@@ -205,17 +198,16 @@ paths:
       description: get music
       operationId: get-music
       parameters:
-      - description: Page number
+      - description: Song name
         in: query
-        name: page
+        name: song
         required: true
-        type: integer
-      - description: Song and group for get music
-        in: body
-        name: input
+        type: string
+      - description: Music group
+        in: query
+        name: group
         required: true
-        schema:
-          $ref: '#/definitions/domain.MusicToGet'
+        type: string
       produces:
       - application/json
       responses:
@@ -245,6 +237,11 @@ paths:
       description: update music
       operationId: update-music
       parameters:
+      - description: Id song
+        in: query
+        name: id
+        required: true
+        type: integer
       - description: Music info to update
         in: body
         name: input

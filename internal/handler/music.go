@@ -42,19 +42,26 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @ID update-music
 // @Accept json
 // @Produce json
+// @Param id query int true "Id song"
 // @Param input body domain.MusicToUpdate true "Music info to update"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
-	var input domain.MusicToUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err := h.service.Update(input)
+	var input domain.MusicToUpdate
+	if err = c.ShouldBindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.service.Update(input, id)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -70,19 +77,19 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @ID delete-music
 // @Accept json
 // @Produce json
-// @Param input body domain.MusicToDelete true "Song and group for delete"
+// @Param id query int true "Id song"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/delete [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
-	var input domain.MusicToDelete
-	if err := c.ShouldBindJSON(&input); err != nil {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err := h.service.Delete(input)
+	err = h.service.Delete(id)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -92,8 +99,6 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 		"status": "success",
 	})
 }
-
-const pageSize = 5
 
 // @Summary GetAllMusic
 // @Tags music
@@ -106,7 +111,7 @@ const pageSize = 5
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
-	page, err := strconv.Atoi(c.Param("page"))
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -127,26 +132,17 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @ID get-music
 // @Accept json
 // @Produce json
-// @Param page query int true "Page number"
-// @Param input body domain.MusicToGet true "Song and group for get music"
+// @Param song query string true "Song name"
+// @Param group query string true "Music group"
 // @Success 200 {object} domain.Music
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
-	page, err := strconv.Atoi(c.Param("page"))
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-	var input domain.MusicToGet
+	song := c.Query("song")
+	group := c.Query("group")
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	music, err := h.service.Get(input, page)
+	music, err := h.service.Get(song, group)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -160,26 +156,29 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @ID get-text-music
 // @Accept json
 // @Produce json
+// @Param song query string true "Song name"
+// @Param group query string true "Music group"
 // @Param page query int true "Page number"
-// @Param input body domain.MusicToGet true "Song and group for get text"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/getText [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
-	page, err := strconv.Atoi(c.Param("page"))
+	song := c.Query("song")
+	group := c.Query("group")
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	var input domain.MusicToGet
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err = c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	text, err := h.service.GetText(input, page)
+	text, err := h.service.GetText(song, group, page)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

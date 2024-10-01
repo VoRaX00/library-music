@@ -1,7 +1,7 @@
 package domain
 
 type Music struct {
-	Id    string `json:"id" db:"id"`
+	Id    int    `json:"id" db:"id"`
 	Song  string `json:"song" db:"song"`
 	Group string `json:"group" db:"music_group"`
 	Text  string `json:"text" db:"text_song"`
@@ -23,9 +23,13 @@ type MusicToUpdate struct {
 }
 
 type MusicToDelete struct {
-	Song string `json:"song" db:"song"`
+	Song  string `json:"song" db:"song"`
+	Group string `json:"group" db:"music_group"`
 }
 
 type MusicToGet struct {
-	Song string `json:"song" db:"song"`
+	Id    int    `json:"id" db:"id"`
+	Song  string `json:"song" db:"song"`
+	Group string `json:"group" db:"music_group"`
+	Link  string `json:"link" db:"link"`
 }

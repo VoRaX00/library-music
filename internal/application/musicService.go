@@ -17,26 +17,22 @@ func (s *MusicService) Add(music domain.MusicToAdd) (int, error) {
 	return s.repo.Add(music)
 }
 
-func (s *MusicService) Delete(music domain.MusicToDelete) error {
-	return s.repo.Delete(music)
+func (s *MusicService) Delete(id int) error {
+	return s.repo.Delete(id)
 }
 
-func (s *MusicService) Update(music domain.MusicToUpdate) error {
-	return s.repo.Update(music)
+func (s *MusicService) Update(music domain.MusicToUpdate, id int) error {
+	return s.repo.Update(music, id)
 }
 
-func (s *MusicService) GetAll(page int) ([]domain.Music, error) {
-	return s.repo.GetAll()
+func (s *MusicService) GetAll(page int) ([]domain.MusicToGet, error) {
+	return s.repo.GetAll(page)
 }
 
-func (s *MusicService) Get(song domain.MusicToGet, page int) (domain.Music, error) {
-	return s.repo.Get(song)
+func (s *MusicService) Get(song, group string) (domain.MusicToGet, error) {
+	return s.repo.Get(song, group)
 }
 
-func (s *MusicService) GetText(music domain.MusicToGet, page int) (string, error) {
-	foundMusic, err := s.repo.Get(music)
-	if err != nil {
-		return "", err
-	}
-	return foundMusic.Text, nil
+func (s *MusicService) GetText(song, group string, page int) (string, error) {
+	return s.repo.GetText(song, group)
 }

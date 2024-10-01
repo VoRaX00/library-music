@@ -87,13 +87,11 @@ const docTemplate = `{
                 "operationId": "delete-music",
                 "parameters": [
                     {
-                        "description": "Song and group for delete",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.MusicToDelete"
-                        }
+                        "type": "integer",
+                        "description": "Id song",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -188,20 +186,25 @@ const docTemplate = `{
                 "operationId": "get-text-music",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Song name",
+                        "name": "song",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Music group",
+                        "name": "group",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "description": "Page number",
                         "name": "page",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "description": "Song and group for get text",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.MusicToGet"
-                        }
                     }
                 ],
                 "responses": {
@@ -251,20 +254,18 @@ const docTemplate = `{
                 "operationId": "get-music",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "type": "string",
+                        "description": "Song name",
+                        "name": "song",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "description": "Song and group for get music",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.MusicToGet"
-                        }
+                        "type": "string",
+                        "description": "Music group",
+                        "name": "group",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -310,6 +311,13 @@ const docTemplate = `{
                 "summary": "UpdateMusic",
                 "operationId": "update-music",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id song",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "Music info to update",
                         "name": "input",
@@ -360,7 +368,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "link": {
                     "type": "string"
@@ -386,22 +394,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.MusicToDelete": {
-            "type": "object",
-            "properties": {
-                "song": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.MusicToGet": {
-            "type": "object",
-            "properties": {
-                "song": {
                     "type": "string"
                 }
             }
