@@ -122,6 +122,22 @@ paths:
       description: get all music
       operationId: get-all-music
       parameters:
+      - description: Song name
+        in: query
+        name: song
+        type: string
+      - description: Music group
+        in: query
+        name: group
+        type: string
+      - description: Link song
+        in: query
+        name: link
+        type: string
+      - description: Text song
+        in: query
+        name: text
+        type: string
       - description: Page number
         in: query
         name: page

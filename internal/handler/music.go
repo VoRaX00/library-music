@@ -106,18 +106,28 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @ID get-all-music
 // @Accept json
 // @Produce json
+// @Param song query string false "Song name"
+// @Param group query string false "Music group"
+// @Param link query string false "Link song"
+// @Param text query string false "Text song"
 // @Param page query int true "Page number"
 // @Success 200 {object} map[string]domain.Music
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
+	song := c.Query("song")
+	group := c.Query("group")
+	link := c.Query("link")
+	text := c.Query("text")
+	filters := domain.NewMusicFilterParams(song, group, link, text)
+
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	musics, err := h.service.GetAll(page)
+	musics, err := h.service.GetAll(filters, page)
 	if err != nil {
 		return
 	}
@@ -171,18 +181,13 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	var input domain.MusicToGet
-
-	if err = c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
 
 	text, err := h.service.GetText(song, group, page)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"text": text,
 	})
