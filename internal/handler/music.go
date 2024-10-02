@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"library-music/internal/domain"
 	"net/http"
@@ -19,6 +20,7 @@ import (
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
+
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input domain.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -62,6 +64,13 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
+	date, err := h.checkedDate(input.ReleaseDate)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	input.ReleaseDate = date.Format("2006-01-02")
 	err = h.service.Update(input, id)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -125,8 +134,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	var date time.Time
 	if inputDate != "" {
 		var err error
-		date, err = time.Parse("02-01-2006", inputDate)
-
+		date, err = h.checkedDate(inputDate)
 		if err != nil {
 			NewErrorResponse(c, http.StatusBadRequest, err.Error())
 			return
@@ -206,4 +214,10 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"text": text,
 	})
+}
+
+func (h *Handler) checkedDate(date string) (time.Time, error) {
+	val, err := time.Parse("02-01-2006", date)
+	fmt.Println(val.Month())
+	return val, err
 }
