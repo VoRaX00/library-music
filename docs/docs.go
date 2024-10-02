@@ -397,6 +397,9 @@ const docTemplate = `{
                 "link": {
                     "type": "string"
                 },
+                "releaseDate": {
+                    "type": "string"
+                },
                 "song": {
                     "type": "string"
                 },
@@ -414,6 +417,9 @@ const docTemplate = `{
                 "link": {
                     "type": "string"
                 },
+                "releaseDate": {
+                    "type": "string"
+                },
                 "song": {
                     "type": "string"
                 },
@@ -429,6 +435,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "link": {
+                    "type": "string"
+                },
+                "releaseDate": {
                     "type": "string"
                 },
                 "song": {

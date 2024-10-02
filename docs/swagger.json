@@ -391,6 +391,9 @@
                 "link": {
                     "type": "string"
                 },
+                "releaseDate": {
+                    "type": "string"
+                },
                 "song": {
                     "type": "string"
                 },
@@ -408,6 +411,9 @@
                 "link": {
                     "type": "string"
                 },
+                "releaseDate": {
+                    "type": "string"
+                },
                 "song": {
                     "type": "string"
                 },
@@ -423,6 +429,9 @@
                     "type": "string"
                 },
                 "link": {
+                    "type": "string"
+                },
+                "releaseDate": {
                     "type": "string"
                 },
                 "song": {

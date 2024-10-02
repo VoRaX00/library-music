@@ -8,6 +8,8 @@ definitions:
         type: integer
       link:
         type: string
+      releaseDate:
+        type: string
       song:
         type: string
       text:
@@ -19,6 +21,8 @@ definitions:
         type: string
       link:
         type: string
+      releaseDate:
+        type: string
       song:
         type: string
       text:
@@ -29,6 +33,8 @@ definitions:
       group:
         type: string
       link:
+        type: string
+      releaseDate:
         type: string
       song:
         type: string
