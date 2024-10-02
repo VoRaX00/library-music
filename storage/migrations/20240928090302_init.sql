@@ -5,6 +5,7 @@ CREATE TABLE music (
     music_group TEXT NOT NULL,
     song TEXT NOT NULL,
     text_song TEXT NOT NULL,
+    release_date DATE NOT NULL,
     link TEXT,
     CONSTRAINT unique_song_group UNIQUE (song, music_group)
 );

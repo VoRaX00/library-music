@@ -22,9 +22,9 @@ func (r *MusicRepository) Add(music domain.MusicToAdd) (int, error) {
 		return -1, err
 	}
 	var musicId int
-	query := "INSERT INTO music (music_group, song, text_song, link) values ($1, $2, $3, $4) RETURNING id"
+	query := "INSERT INTO music (music_group, song, text_song, link, release_date) values ($1, $2, $3, $4, $5) RETURNING id"
 
-	row := tx.QueryRow(query, music.Group, music.Song, music.Text, music.Link)
+	row := tx.QueryRow(query, music.Group, music.Song, music.Text, music.Link, music.ReleaseDate)
 	err = row.Scan(&musicId)
 	if err != nil {
 		_ = tx.Rollback()
@@ -40,8 +40,8 @@ func (r *MusicRepository) Delete(id int) error {
 }
 
 func (r *MusicRepository) Update(music domain.MusicToUpdate, id int) error {
-	query := "UPDATE music SET song=$1, music_group=$2, text_song=$3, link=$4 WHERE id=$5"
-	_, err := r.db.Exec(query, music.Song, music.Group, music.Text, music.Link, id)
+	query := "UPDATE music SET song=$1, music_group=$2, text_song=$3, link=$4, release_date=$5 WHERE id=$6"
+	_, err := r.db.Exec(query, music.Song, music.Group, music.Text, music.Link, music.ReleaseDate, id)
 	return err
 }
 
@@ -96,9 +96,7 @@ const pageSize = 5
 
 func (r *MusicRepository) GetAll(params domain.MusicFilterParams, page int) ([]domain.MusicToGet, error) {
 	var musics []domain.MusicToGet
-
 	query, args := generateQuery(params, page)
-
 	if err := r.db.Select(&musics, query, args...); err != nil {
 		return nil, err
 	}
@@ -107,7 +105,7 @@ func (r *MusicRepository) GetAll(params domain.MusicFilterParams, page int) ([]d
 
 func (r *MusicRepository) Get(song, group string) (domain.MusicToGet, error) {
 	var foundMusic domain.MusicToGet
-	query := "SELECT id, music_group, song, link FROM music WHERE song=$1 AND music_group=$2"
+	query := "SELECT id, music_group, song, link, release_date FROM music WHERE song=$1 AND music_group=$2"
 	err := r.db.Get(&foundMusic, query, song, group)
 	return foundMusic, err
 }

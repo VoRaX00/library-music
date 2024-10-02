@@ -5,6 +5,7 @@ import (
 	"library-music/internal/domain"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // @Summary AddMusic
@@ -119,7 +120,15 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	group := c.Query("group")
 	link := c.Query("link")
 	text := c.Query("text")
-	filters := domain.NewMusicFilterParams(song, group, link, text)
+
+	inputDate := c.Query("releaseDate")
+	releaseDate, err := time.Parse("02-01-2006", inputDate)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	filters := domain.NewMusicFilterParams(song, group, link, text, releaseDate)
 
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
