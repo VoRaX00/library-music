@@ -8,10 +8,10 @@ import (
 )
 
 type MusicService struct {
-	repo *infrastructure.Repository
+	repo infrastructure.IMusicRepository
 }
 
-func NewMusicService(repo *infrastructure.Repository) *MusicService {
+func NewMusicService(repo infrastructure.IMusicRepository) *MusicService {
 	return &MusicService{repo: repo}
 }
 

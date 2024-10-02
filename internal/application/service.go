@@ -8,6 +8,6 @@ type Service struct {
 
 func NewService(repos *infrastructure.Repository) *Service {
 	return &Service{
-		IMusicService: NewMusicService(repos),
+		IMusicService: NewMusicService(repos.IMusicRepository),
 	}
 }
