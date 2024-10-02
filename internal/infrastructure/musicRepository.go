@@ -46,7 +46,7 @@ func (r *MusicRepository) Update(music domain.MusicToUpdate, id int) error {
 }
 
 func generateQuery(params domain.MusicFilterParams, page int) (string, []interface{}) {
-	query := "SELECT id, music_group, song, link FROM music"
+	query := "SELECT id, music_group, song, link, to_char(release_date, 'DD-MM-YYYY') as release_date FROM music"
 	var args []interface{}
 
 	isWhere := false
@@ -105,7 +105,8 @@ func (r *MusicRepository) GetAll(params domain.MusicFilterParams, page int) ([]d
 
 func (r *MusicRepository) Get(song, group string) (domain.MusicToGet, error) {
 	var foundMusic domain.MusicToGet
-	query := "SELECT id, music_group, song, link, release_date FROM music WHERE song=$1 AND music_group=$2"
+	query := `SELECT id, music_group, song, link, to_char(release_date, 'DD-MM-YYYY') as release_date
+		FROM music WHERE song=$1 AND music_group=$2`
 	err := r.db.Get(&foundMusic, query, song, group)
 	return foundMusic, err
 }

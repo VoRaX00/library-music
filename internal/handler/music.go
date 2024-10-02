@@ -122,13 +122,18 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	text := c.Query("text")
 
 	inputDate := c.Query("releaseDate")
-	releaseDate, err := time.Parse("02-01-2006", inputDate)
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
+	var date time.Time
+	if inputDate != "" {
+		var err error
+		date, err = time.Parse("02-01-2006", inputDate)
+
+		if err != nil {
+			NewErrorResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
 	}
 
-	filters := domain.NewMusicFilterParams(song, group, link, text, releaseDate)
+	filters := domain.NewMusicFilterParams(song, group, link, text, date)
 
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
@@ -166,6 +171,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, music)
 }
 
