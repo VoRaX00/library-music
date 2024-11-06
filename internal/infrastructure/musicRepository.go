@@ -16,7 +16,7 @@ func NewMusicRepository(db *sqlx.DB) *MusicRepository {
 	}
 }
 
-func (r *MusicRepository) Add(music domain.MusicToAdd) (int, error) {
+func (r *MusicRepository) Add(music domain.Music) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return -1, err
@@ -39,13 +39,13 @@ func (r *MusicRepository) Delete(id int) error {
 	return err
 }
 
-func (r *MusicRepository) Update(music domain.MusicToUpdate, id int) error {
+func (r *MusicRepository) Update(music domain.Music, id int) error {
 	query := "UPDATE music SET song=$1, music_group=$2, text_song=$3, link=$4, release_date=$5 WHERE id=$6"
 	_, err := r.db.Exec(query, music.Song, music.Group, music.Text, music.Link, music.ReleaseDate, id)
 	return err
 }
 
-func generateQuery(params domain.MusicFilterParams, page int) (string, []interface{}) {
+func generateQuery(params domain.Music, page int) (string, []interface{}) {
 	query := "SELECT id, music_group, song, link, to_char(release_date, 'DD-MM-YYYY') as release_date FROM music"
 	var args []interface{}
 
@@ -94,8 +94,8 @@ func generateQuery(params domain.MusicFilterParams, page int) (string, []interfa
 
 const pageSize = 5
 
-func (r *MusicRepository) GetAll(params domain.MusicFilterParams, page int) ([]domain.MusicToGet, error) {
-	var musics []domain.MusicToGet
+func (r *MusicRepository) GetAll(params domain.Music, page int) ([]domain.Music, error) {
+	var musics []domain.Music
 	query, args := generateQuery(params, page)
 	if err := r.db.Select(&musics, query, args...); err != nil {
 		return nil, err
@@ -103,8 +103,8 @@ func (r *MusicRepository) GetAll(params domain.MusicFilterParams, page int) ([]d
 	return musics, nil
 }
 
-func (r *MusicRepository) Get(song, group string) (domain.MusicToGet, error) {
-	var foundMusic domain.MusicToGet
+func (r *MusicRepository) Get(song, group string) (domain.Music, error) {
+	var foundMusic domain.Music
 	query := `SELECT id, music_group, song, link, to_char(release_date, 'DD-MM-YYYY') as release_date
 		FROM music WHERE song=$1 AND music_group=$2`
 	err := r.db.Get(&foundMusic, query, song, group)
