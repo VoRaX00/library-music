@@ -33,7 +33,7 @@ func (m *MusicMapper) MusicForGet(object domain.Music) application.MusicToGet {
 }
 
 func (m *MusicMapper) UpdateToMusic(object application.MusicToUpdate) (domain.Music, error) {
-	date, err := time.Parse(object.ReleaseDate, "DD-MM-YYYY")
+	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return domain.Music{}, err
 	}
@@ -47,7 +47,7 @@ func (m *MusicMapper) UpdateToMusic(object application.MusicToUpdate) (domain.Mu
 }
 
 func (m *MusicMapper) AddToMusic(object application.MusicToAdd) (domain.Music, error) {
-	date, err := time.Parse(object.ReleaseDate, "DD-MM-YYYY")
+	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return domain.Music{}, err
 	}

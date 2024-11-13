@@ -2,17 +2,17 @@ package application
 
 import (
 	"errors"
-	"library-music/internal/infrastructure"
+	"library-music/internal/domain"
 	"library-music/pkg/mapper"
 	"strings"
 )
 
 type MusicService struct {
-	repo   infrastructure.IMusicRepository
+	repo   IMusicRepository
 	mapper mapper.MusicMapper
 }
 
-func NewMusicService(repo infrastructure.IMusicRepository) *MusicService {
+func NewMusicService(repo IMusicRepository) *MusicService {
 	return &MusicService{
 		repo:   repo,
 		mapper: mapper.MusicMapper{},
@@ -31,10 +31,10 @@ func (s *MusicService) Delete(id int) error {
 	return s.repo.Delete(id)
 }
 
-func (s *MusicService) Update(music MusicToUpdate, id int) error {
+func (s *MusicService) Update(music MusicToUpdate, id int) (domain.Music, error) {
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
-		return err
+		return domain.Music{}, err
 	}
 	return s.repo.Update(data, id)
 }

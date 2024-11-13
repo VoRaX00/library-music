@@ -5,13 +5,12 @@ CREATE TABLE music (
     song TEXT NOT NULL,
     text_song TEXT NOT NULL,
     release_date DATE NOT NULL,
-    link TEXT,
-    CONSTRAINT unique_song_group UNIQUE (song, music_group)
+    link TEXT
 );
 
 CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE music_groups (
@@ -22,5 +21,7 @@ CREATE TABLE music_groups (
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
+DROP TABLE music_groups;
 DROP TABLE music;
+DROP TABLE groups;
 -- +goose StatementEnd

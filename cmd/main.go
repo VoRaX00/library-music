@@ -17,7 +17,6 @@ import (
 // @title Library music API
 // @version 1.0
 // @description API Server for Library music application
-
 // @host localhost:8090
 // @BasePath /
 func main() {
