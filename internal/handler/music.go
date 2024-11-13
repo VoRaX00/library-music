@@ -75,7 +75,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	}
 
 	input.ReleaseDate = date.Format("2006-01-02")
-	err = h.service.Update(input, id)
+	music, err := h.service.Update(input, id)
 	if err != nil {
 		logrus.Error(err)
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -83,6 +83,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
+		"music":  music,
 	})
 }
 

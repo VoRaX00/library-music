@@ -18,6 +18,14 @@ CREATE TABLE music_groups (
     group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
     PRIMARY KEY (music_id, group_id)
 );
+
+CREATE INDEX idx_music_groups_music_id ON music_groups(music_id);
+CREATE INDEX idx_music_groups_group_id ON music_groups(group_id);
+CREATE INDEX idx_music_song ON music(song);
+CREATE INDEX idx_group_name ON groups(name);
+CREATE INDEX idx_music_song_group ON music_groups(music_id, group_id);
+CREATE UNIQUE INDEX idx_unique_group_name ON groups(name);
+
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
