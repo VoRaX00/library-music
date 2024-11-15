@@ -1,9 +1,12 @@
 package infrastructure
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/jmoiron/sqlx"
+	"library-music/internal/application"
+)
 
 type Repository struct {
-	IMusicRepository
+	application.IMusicRepository
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
