@@ -19,10 +19,10 @@ const docTemplate = `{
             "post": {
                 "description": "Create a new music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -75,10 +75,10 @@ const docTemplate = `{
             "delete": {
                 "description": "delete music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -129,10 +129,10 @@ const docTemplate = `{
             "get": {
                 "description": "get all music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -198,10 +198,10 @@ const docTemplate = `{
             "get": {
                 "description": "get text music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -266,10 +266,10 @@ const docTemplate = `{
             "get": {
                 "description": "get music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -324,10 +324,10 @@ const docTemplate = `{
             "put": {
                 "description": "update music",
                 "consumes": [
-                    "application/json"
+                    "services/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "services/json"
                 ],
                 "tags": [
                     "music"
@@ -458,7 +458,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Library music API",
-	Description:      "API Server for Library music application",
+	Description:      "API Server for Library music services",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

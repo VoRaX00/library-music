@@ -1,25 +1,29 @@
-package application
+package music
 
 import (
 	"errors"
 	"library-music/internal/domain"
+	"library-music/internal/services"
 	"library-music/pkg/mapper"
+	"log/slog"
 	"strings"
 )
 
-type MusicService struct {
-	repo   IMusicRepository
+type Music struct {
+	log    *slog.Logger
+	repo   services.Music
 	mapper mapper.MusicMapper
 }
 
-func NewMusicService(repo IMusicRepository) *MusicService {
-	return &MusicService{
+func New(log *slog.Logger, repo services.Music) *Music {
+	return &Music{
+		log:    log,
 		repo:   repo,
 		mapper: mapper.MusicMapper{},
 	}
 }
 
-func (s *MusicService) Add(music MusicToAdd) (int, error) {
+func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	data, err := s.mapper.AddToMusic(music)
 	if err != nil {
 		return 0, err
@@ -27,11 +31,11 @@ func (s *MusicService) Add(music MusicToAdd) (int, error) {
 	return s.repo.Add(data)
 }
 
-func (s *MusicService) Delete(id int) error {
+func (s *Music) Delete(id int) error {
 	return s.repo.Delete(id)
 }
 
-func (s *MusicService) Update(music MusicToUpdate, id int) (domain.Music, error) {
+func (s *Music) Update(music services.MusicToUpdate, id int) (domain.Music, error) {
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
 		return domain.Music{}, err
@@ -39,28 +43,28 @@ func (s *MusicService) Update(music MusicToUpdate, id int) (domain.Music, error)
 	return s.repo.Update(data, id)
 }
 
-func (s *MusicService) GetAll(params MusicFilterParams, page int) ([]MusicToGet, error) {
+func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error) {
 	res, err := s.repo.GetAll(s.mapper.FilterToMusic(params), page)
 	if err != nil {
 		return nil, err
 	}
 
-	arr := make([]MusicToGet, len(res))
+	arr := make([]services.MusicToGet, len(res))
 	for i, v := range res {
 		arr[i] = s.mapper.MusicForGet(v)
 	}
 	return arr, nil
 }
 
-func (s *MusicService) Get(song, group string) (MusicToGet, error) {
+func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	music, err := s.repo.Get(song, group)
 	if err != nil {
-		return MusicToGet{}, err
+		return services.MusicToGet{}, err
 	}
 	return s.mapper.MusicForGet(music), nil
 }
 
-func (s *MusicService) GetText(song, group string, page int) (string, error) {
+func (s *Music) GetText(song, group string, page int) (string, error) {
 	text, err := s.repo.GetText(song, group)
 	if err != nil {
 		return "", err

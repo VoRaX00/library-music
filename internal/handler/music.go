@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"library-music/internal/application"
+	"library-music/internal/services"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,7 +21,7 @@ import (
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
-	var input application.MusicToAdd
+	var input services.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
 		logrus.Error(err)
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -60,7 +60,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	var input application.MusicToUpdate
+	var input services.MusicToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
 		logrus.Error(err)
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -150,7 +150,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		}
 	}
 
-	filters := application.NewMusicFilterParams(song, group, link, text, date)
+	filters := services.NewMusicFilterParams(song, group, link, text, date)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		logrus.Error(err)

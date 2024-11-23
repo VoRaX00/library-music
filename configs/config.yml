@@ -5,4 +5,5 @@ db:
   port: "5431"
   name: "library_music_db"
   username: "postgres"
-  sslmode: "disable"
+  ssl_mode: "disable"
+env: "local"

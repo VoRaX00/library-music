@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"library-music/internal/application"
 	"library-music/internal/domain"
+	"library-music/internal/services"
 	"time"
 )
 
@@ -13,7 +13,7 @@ func NewMapper[T any, U any]() *MusicMapper {
 	return &MusicMapper{}
 }
 
-func (m *MusicMapper) FilterToMusic(object application.MusicFilterParams) domain.Music {
+func (m *MusicMapper) FilterToMusic(object services.MusicFilterParams) domain.Music {
 	return domain.Music{
 		Song:        object.Song,
 		Group:       object.Group,
@@ -23,8 +23,8 @@ func (m *MusicMapper) FilterToMusic(object application.MusicFilterParams) domain
 	}
 }
 
-func (m *MusicMapper) MusicForGet(object domain.Music) application.MusicToGet {
-	return application.MusicToGet{
+func (m *MusicMapper) MusicForGet(object domain.Music) services.MusicToGet {
+	return services.MusicToGet{
 		Song:        object.Song,
 		Group:       object.Group,
 		Link:        object.Link,
@@ -32,7 +32,7 @@ func (m *MusicMapper) MusicForGet(object domain.Music) application.MusicToGet {
 	}
 }
 
-func (m *MusicMapper) UpdateToMusic(object application.MusicToUpdate) (domain.Music, error) {
+func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (domain.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return domain.Music{}, err
@@ -46,7 +46,7 @@ func (m *MusicMapper) UpdateToMusic(object application.MusicToUpdate) (domain.Mu
 	}, nil
 }
 
-func (m *MusicMapper) AddToMusic(object application.MusicToAdd) (domain.Music, error) {
+func (m *MusicMapper) AddToMusic(object services.MusicToAdd) (domain.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return domain.Music{}, err

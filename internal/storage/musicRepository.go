@@ -1,4 +1,4 @@
-package infrastructure
+package storage
 
 import (
 	"fmt"
@@ -8,6 +8,12 @@ import (
 
 type MusicRepository struct {
 	db *sqlx.DB
+}
+
+func NewMusicRepository(db *sqlx.DB) *MusicRepository {
+	return &MusicRepository{
+		db: db,
+	}
 }
 
 func (r *MusicRepository) getGroupId(name string) (int, error) {
@@ -55,12 +61,6 @@ func (r *MusicRepository) insertMusicGroups(tx *sqlx.Tx, musicId, groupId int) e
 		return row.Err()
 	}
 	return nil
-}
-
-func NewMusicRepository(db *sqlx.DB) *MusicRepository {
-	return &MusicRepository{
-		db: db,
-	}
 }
 
 func (r *MusicRepository) Add(music domain.Music) (int, error) {
