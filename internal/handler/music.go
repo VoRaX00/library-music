@@ -26,6 +26,7 @@ const (
 // @Param input body domain.MusicToAdd true "Music info to add"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
@@ -61,6 +62,7 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Param input body domain.MusicToUpdate true "Music info to update"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
@@ -85,6 +87,9 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	input.ReleaseDate = date.Format("2006-01-02")
 	song, err := h.service.Update(input, id)
 	if err != nil {
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
+		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -104,6 +109,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Param id query int true "Id song"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/delete [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
@@ -116,8 +122,9 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	err = h.service.Delete(id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidCredentials)
+			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
 		}
+
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -139,6 +146,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Param text query string false "Text song"
 // @Param page query int true "Page number"
 // @Success 200 {object} map[string]domain.Music
+// @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
@@ -193,6 +201,7 @@ func (h *Handler) checkedDate(date string) (time.Time, error) {
 // @Param group query string true "Music group"
 // @Success 200 {object} domain.Music
 // @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
@@ -208,7 +217,9 @@ func (h *Handler) GetMusic(c *gin.Context) {
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
-	c.JSON(http.StatusOK, msc)
+	c.JSON(http.StatusOK, gin.H{
+		"music": msc,
+	})
 }
 
 // @Summary GetTextMusic
