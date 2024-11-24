@@ -3,12 +3,18 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"library-music/internal/services"
 	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
 	"time"
+)
+
+const (
+	ErrInvalidArguments   = "invalid arguments"
+	ErrInvalidCredentials = "invalid credentials"
+	ErrAlreadyExists      = "already exists"
+	ErrInternalServer     = "internal server error"
 )
 
 // @Summary AddMusic
@@ -25,19 +31,18 @@ import (
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input services.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
-		h.log.Warn("invalid arguments")
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	id, err := h.service.Add(input)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicExists) {
-			NewErrorResponse(c, http.StatusConflict, err.Error())
+			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
 			return
 		}
-		h.log.Warn("internal error")
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
@@ -61,35 +66,32 @@ func (h *Handler) AddMusic(c *gin.Context) {
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	var input services.MusicToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	date, err := h.checkedDate(input.ReleaseDate)
 	if err != nil {
-		logrus.Error(err)
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	input.ReleaseDate = date.Format("2006-01-02")
-	music, err := h.service.Update(input, id)
+	song, err := h.service.Update(input, id)
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
-		"music":  music,
+		"music":  song,
 	})
 }
 
@@ -107,15 +109,16 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	err = h.service.Delete(id)
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidCredentials)
+		}
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
@@ -150,8 +153,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		var err error
 		date, err = h.checkedDate(inputDate)
 		if err != nil {
-			logrus.Error(err)
-			NewErrorResponse(c, http.StatusBadRequest, err.Error())
+			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 			return
 		}
 	}
@@ -159,20 +161,26 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	filters := services.NewMusicFilterParams(song, group, link, text, date)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	musics, err := h.service.GetAll(filters, page)
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, music.ErrInvalidCredentials) {
+			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidCredentials)
+		}
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"musics": musics,
 	})
+}
+
+func (h *Handler) checkedDate(date string) (time.Time, error) {
+	val, err := time.Parse("02-01-2006", date)
+	return val, err
 }
 
 // @Summary GetMusic
@@ -190,13 +198,17 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
-	music, err := h.service.Get(song, group)
+	msc, err := h.service.Get(song, group)
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
+			return
+		}
+
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
-	c.JSON(http.StatusOK, music)
+	c.JSON(http.StatusOK, msc)
 }
 
 // @Summary GetTextMusic
@@ -217,14 +229,12 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 	group := c.Query("group")
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
-		logrus.Error(err)
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	text, err := h.service.GetText(song, group, page)
 	if err != nil {
-		logrus.Error(err)
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -232,9 +242,4 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"text": text,
 	})
-}
-
-func (h *Handler) checkedDate(date string) (time.Time, error) {
-	val, err := time.Parse("02-01-2006", date)
-	return val, err
 }

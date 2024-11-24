@@ -18,6 +18,7 @@ type Music struct {
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrMusicExists        = errors.New("music already exists")
+	ErrMusicNotFound      = errors.New("music not found")
 )
 
 func New(log *slog.Logger, repo services.Music) *Music {
