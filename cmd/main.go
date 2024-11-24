@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"library-music/internal/app"
 	"library-music/internal/config"
 	"log/slog"

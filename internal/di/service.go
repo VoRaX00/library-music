@@ -1,4 +1,4 @@
-package services
+package di
 
 import (
 	"library-music/internal/services/music"

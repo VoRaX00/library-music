@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"library-music/internal/services"
+	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,14 +25,18 @@ import (
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input services.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
-		logrus.Error(err)
+		h.log.Warn("invalid arguments")
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	id, err := h.service.Add(input)
 	if err != nil {
-		logrus.Error(err)
+		if errors.Is(err, music.ErrMusicExists) {
+			NewErrorResponse(c, http.StatusConflict, err.Error())
+			return
+		}
+		h.log.Warn("internal error")
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

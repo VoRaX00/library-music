@@ -3,10 +3,11 @@ package app
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 	"library-music/internal/app/server"
+	"library-music/internal/di"
 	"library-music/internal/handler"
-	"library-music/internal/services"
 	"library-music/internal/storage"
 	"library-music/internal/storage/postgres"
 	"log/slog"
@@ -27,7 +28,7 @@ func New(log *slog.Logger, storagePath string, port string) *App {
 	}()
 
 	repos := storage.NewRepository(db)
-	srs := services.NewService(log, repos)
+	srs := di.NewService(log, repos)
 	handlers := handler.NewHandler(log, srs)
 
 	srv := server.New(log, port, handlers.InitRouter())

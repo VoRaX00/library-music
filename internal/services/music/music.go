@@ -15,6 +15,11 @@ type Music struct {
 	mapper mapper.MusicMapper
 }
 
+var (
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrMusicExists        = errors.New("music already exists")
+)
+
 func New(log *slog.Logger, repo services.Music) *Music {
 	return &Music{
 		log:    log,

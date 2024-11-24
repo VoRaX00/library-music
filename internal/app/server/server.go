@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -24,7 +25,7 @@ func New(log *slog.Logger, port string, handler http.Handler) *Server {
 
 func (s *Server) MustRun() {
 	err := s.Run()
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		panic(err)
 	}
 }
