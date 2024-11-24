@@ -3,20 +3,20 @@ package storage
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"library-music/internal/domain"
+	"library-music/internal/domain/models"
 )
 
-type MusicRepository struct {
+type Music struct {
 	db *sqlx.DB
 }
 
-func NewMusicRepository(db *sqlx.DB) *MusicRepository {
-	return &MusicRepository{
+func New(db *sqlx.DB) *Music {
+	return &Music{
 		db: db,
 	}
 }
 
-func (r *MusicRepository) getGroupId(name string) (int, error) {
+func (r *Music) getGroupId(name string) (int, error) {
 	var id int
 	query := "SELECT id FROM groups WHERE name=?"
 	row := r.db.QueryRow(query, name)
@@ -26,7 +26,7 @@ func (r *MusicRepository) getGroupId(name string) (int, error) {
 	return id, nil
 }
 
-func (r *MusicRepository) insertMusic(tx *sqlx.Tx, music domain.Music) (int, error) {
+func (r *Music) insertMusic(tx *sqlx.Tx, music models.Music) (int, error) {
 	var musicId int
 	query := `INSERT INTO music (song, text_song, release_date, link) VALUES (?, ?, ?, ?);`
 	row := tx.QueryRow(query, music.Song, music.Text, music.ReleaseDate, music.Link)
@@ -38,7 +38,7 @@ func (r *MusicRepository) insertMusic(tx *sqlx.Tx, music domain.Music) (int, err
 	return musicId, nil
 }
 
-func (r *MusicRepository) insertGroup(tx *sqlx.Tx, groupName string) (int, error) {
+func (r *Music) insertGroup(tx *sqlx.Tx, groupName string) (int, error) {
 	groupId, err := r.getGroupId(groupName)
 	if err == nil {
 		return groupId, nil
@@ -53,7 +53,7 @@ func (r *MusicRepository) insertGroup(tx *sqlx.Tx, groupName string) (int, error
 	return groupId, nil
 }
 
-func (r *MusicRepository) insertMusicGroups(tx *sqlx.Tx, musicId, groupId int) error {
+func (r *Music) insertMusicGroups(tx *sqlx.Tx, musicId, groupId int) error {
 	query := `INSERT INTO music_groups (music_id, group_id) VALUES (?, ?)`
 	row := tx.QueryRow(query, musicId, groupId)
 	if row.Err() != nil {
@@ -63,7 +63,7 @@ func (r *MusicRepository) insertMusicGroups(tx *sqlx.Tx, musicId, groupId int) e
 	return nil
 }
 
-func (r *MusicRepository) Add(music domain.Music) (int, error) {
+func (r *Music) Add(music models.Music) (int, error) {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return -1, err
@@ -80,7 +80,7 @@ func (r *MusicRepository) Add(music domain.Music) (int, error) {
 	return musicId, tx.Commit()
 }
 
-func (r *MusicRepository) Delete(id int) error {
+func (r *Music) Delete(id int) error {
 	query := "DELETE FROM music_groups WHERE music_id=$1"
 	_, err := r.db.Exec(query, id)
 	if err != nil {
@@ -92,13 +92,13 @@ func (r *MusicRepository) Delete(id int) error {
 	return err
 }
 
-func (r *MusicRepository) Update(music domain.Music, id int) (domain.Music, error) {
+func (r *Music) Update(music models.Music, id int) (models.Music, error) {
 	query := "UPDATE music SET song=?, text_song=?, release_date=?, link=? WHERE id=?"
 	_, err := r.db.Exec(query, music.Song, music.Text, music.ReleaseDate, music.Link, id)
-	return domain.Music{}, err
+	return models.Music{}, err
 }
 
-func generateQuery(params domain.Music, page int) (string, []interface{}) {
+func generateQuery(params models.Music, page int) (string, []interface{}) {
 	query := "SELECT id, song, link, release_date FROM music"
 	var args []interface{}
 
@@ -135,8 +135,8 @@ func generateQuery(params domain.Music, page int) (string, []interface{}) {
 	return query, args
 }
 
-func (r *MusicRepository) GetById(id int) (domain.Music, error) {
-	var music domain.Music
+func (r *Music) GetById(id int) (models.Music, error) {
+	var music models.Music
 	query := `SELECT m.*, g.name
 	FROM music m
 	JOIN music_groups mg ON mg.music_id = m.id
@@ -149,15 +149,15 @@ func (r *MusicRepository) GetById(id int) (domain.Music, error) {
 
 const pageSize = 5
 
-func (r *MusicRepository) GetAll(params domain.Music, page int) ([]domain.Music, error) {
-	var musics []domain.Music
+func (r *Music) GetAll(params models.Music, page int) ([]models.Music, error) {
+	var musics []models.Music
 	query, args := generateQuery(params, page)
 	err := r.db.Select(&musics, query, args...)
 	return musics, err
 }
 
-func (r *MusicRepository) Get(song, group string) (domain.Music, error) {
-	var foundMusic domain.Music
+func (r *Music) Get(song, group string) (models.Music, error) {
+	var foundMusic models.Music
 	query := `SELECT m.*, g.name
 	FROM music m 
 	JOIN music_groups mg ON m.id = mg.music_id 
@@ -168,7 +168,7 @@ func (r *MusicRepository) Get(song, group string) (domain.Music, error) {
 	return foundMusic, err
 }
 
-func (r *MusicRepository) GetText(song, group string) (string, error) {
+func (r *Music) GetText(song, group string) (string, error) {
 	var text string
 	query := `SELECT m.text_song
 	FROM music m

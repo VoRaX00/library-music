@@ -1,20 +1,16 @@
 package mapper
 
 import (
-	"library-music/internal/domain"
-	"library-music/internal/services/music"
+	"library-music/internal/domain/models"
+	"library-music/internal/services"
 	"time"
 )
 
 type MusicMapper struct {
 }
 
-func NewMapper[T any, U any]() *MusicMapper {
-	return &MusicMapper{}
-}
-
-func (m *MusicMapper) FilterToMusic(object music.FilterParams) domain.Music {
-	return domain.Music{
+func (m *MusicMapper) FilterToMusic(object services.FilterParams) models.Music {
+	return models.Music{
 		Song:        object.Song,
 		Group:       object.Group,
 		Text:        object.Text,
@@ -23,8 +19,8 @@ func (m *MusicMapper) FilterToMusic(object music.FilterParams) domain.Music {
 	}
 }
 
-func (m *MusicMapper) MusicForGet(object domain.Music) music.ToGet {
-	return music.ToGet{
+func (m *MusicMapper) MusicForGet(object models.Music) services.ToGet {
+	return services.ToGet{
 		Song:        object.Song,
 		Group:       object.Group,
 		Link:        object.Link,
@@ -32,12 +28,12 @@ func (m *MusicMapper) MusicForGet(object domain.Music) music.ToGet {
 	}
 }
 
-func (m *MusicMapper) UpdateToMusic(object music.ToUpdate) (domain.Music, error) {
+func (m *MusicMapper) UpdateToMusic(object services.ToUpdate) (models.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
-		return domain.Music{}, err
+		return models.Music{}, err
 	}
-	return domain.Music{
+	return models.Music{
 		Song:        object.Song,
 		Group:       object.Group,
 		Text:        object.Text,
@@ -46,12 +42,12 @@ func (m *MusicMapper) UpdateToMusic(object music.ToUpdate) (domain.Music, error)
 	}, nil
 }
 
-func (m *MusicMapper) AddToMusic(object music.ToAdd) (domain.Music, error) {
+func (m *MusicMapper) AddToMusic(object services.ToAdd) (models.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
-		return domain.Music{}, err
+		return models.Music{}, err
 	}
-	return domain.Music{
+	return models.Music{
 		Song:        object.Song,
 		Group:       object.Group,
 		Text:        object.Text,

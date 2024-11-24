@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"library-music/internal/services"
 	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
@@ -29,7 +30,7 @@ const (
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
-	var input music.ToAdd
+	var input services.ToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -71,7 +72,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	var input music.ToUpdate
+	var input services.ToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -165,7 +166,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		}
 	}
 
-	filters := music.NewMusicFilterParams(song, group, link, text, date)
+	filters := services.NewMusicFilterParams(song, group, link, text, date)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)

@@ -3,7 +3,8 @@ package music
 import (
 	"errors"
 	"fmt"
-	"library-music/internal/domain"
+	"library-music/internal/domain/models"
+	"library-music/internal/services"
 	"library-music/pkg/mapper"
 	"log/slog"
 	"strings"
@@ -29,7 +30,7 @@ func New(log *slog.Logger, repo Repo) *Music {
 	}
 }
 
-func (s *Music) Add(music ToAdd) (int, error) {
+func (s *Music) Add(music services.ToAdd) (int, error) {
 	const op = "music.Add"
 	log := s.log.With(
 		slog.String("op", op),
@@ -76,7 +77,7 @@ func (s *Music) Delete(id int) error {
 	return nil
 }
 
-func (s *Music) Update(music ToUpdate, id int) (domain.Music, error) {
+func (s *Music) Update(music services.ToUpdate, id int) (models.Music, error) {
 	const op = "music.Update"
 	log := s.log.With(
 		slog.String("op", op),
@@ -85,7 +86,7 @@ func (s *Music) Update(music ToUpdate, id int) (domain.Music, error) {
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
 		log.Info("invalid credentials", err.Error())
-		return domain.Music{}, fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+		return models.Music{}, fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 	}
 
 	log.Info("updating a song")
@@ -93,17 +94,17 @@ func (s *Music) Update(music ToUpdate, id int) (domain.Music, error) {
 	if err != nil {
 		if errors.Is(err, ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return domain.Music{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return models.Music{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
 
 		log.Error("failed to update a song", err.Error())
-		return domain.Music{}, fmt.Errorf("%s: %w", op, err)
+		return models.Music{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully updated a song")
 	return updatedMusic, nil
 }
 
-func (s *Music) GetAll(params FilterParams, page int) ([]ToGet, error) {
+func (s *Music) GetAll(params services.FilterParams, page int) ([]services.ToGet, error) {
 	const op = "music.GetAll"
 	log := s.log.With(
 		slog.String("op", op),
@@ -116,7 +117,7 @@ func (s *Music) GetAll(params FilterParams, page int) ([]ToGet, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	arr := make([]ToGet, len(res))
+	arr := make([]services.ToGet, len(res))
 	for i, v := range res {
 		arr[i] = s.mapper.MusicForGet(v)
 	}
@@ -124,7 +125,7 @@ func (s *Music) GetAll(params FilterParams, page int) ([]ToGet, error) {
 	return arr, nil
 }
 
-func (s *Music) Get(song, group string) (ToGet, error) {
+func (s *Music) Get(song, group string) (services.ToGet, error) {
 	const op = "music.Get"
 	log := s.log.With(
 		slog.String("op", op),
@@ -135,9 +136,9 @@ func (s *Music) Get(song, group string) (ToGet, error) {
 	if err != nil {
 		if errors.Is(err, ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return ToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return services.ToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
-		return ToGet{}, fmt.Errorf("%s: %w", op, err)
+		return services.ToGet{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully fetched a song")
 	return s.mapper.MusicForGet(music), nil
