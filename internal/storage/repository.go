@@ -2,14 +2,15 @@ package storage
 
 import (
 	"github.com/jmoiron/sqlx"
+	musicrepo "library-music/internal/storage/music"
 )
 
 type Repository struct {
-	Music *Music
+	Music *musicrepo.Music
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Music: New(db),
+		Music: musicrepo.New(db),
 	}
 }

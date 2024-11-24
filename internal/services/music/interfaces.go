@@ -7,7 +7,7 @@ import (
 type Repo interface {
 	Add(music models.Music) (int, error)
 	Delete(musicId int) error
-	Update(music models.Music, id int) (models.Music, error)
+	Update(music models.Music, id int) error
 	GetById(musicId int) (models.Music, error)
 	GetAll(params models.Music, page int) ([]models.Music, error)
 	Get(song, group string) (models.Music, error)

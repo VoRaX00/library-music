@@ -3,7 +3,6 @@ package music
 import (
 	"errors"
 	"fmt"
-	"library-music/internal/domain/models"
 	"library-music/internal/services"
 	"library-music/pkg/mapper"
 	"log/slog"
@@ -77,7 +76,7 @@ func (s *Music) Delete(id int) error {
 	return nil
 }
 
-func (s *Music) Update(music services.ToUpdate, id int) (models.Music, error) {
+func (s *Music) Update(music services.ToUpdate, id int) error {
 	const op = "music.Update"
 	log := s.log.With(
 		slog.String("op", op),
@@ -86,22 +85,22 @@ func (s *Music) Update(music services.ToUpdate, id int) (models.Music, error) {
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
 		log.Info("invalid credentials", err.Error())
-		return models.Music{}, fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+		return fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 	}
 
 	log.Info("updating a song")
-	updatedMusic, err := s.repo.Update(data, id)
+	err = s.repo.Update(data, id)
 	if err != nil {
 		if errors.Is(err, ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return models.Music{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
 
 		log.Error("failed to update a song", err.Error())
-		return models.Music{}, fmt.Errorf("%s: %w", op, err)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully updated a song")
-	return updatedMusic, nil
+	return nil
 }
 
 func (s *Music) GetAll(params services.FilterParams, page int) ([]services.ToGet, error) {
