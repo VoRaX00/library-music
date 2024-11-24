@@ -1,8 +1,8 @@
-package services
+package music
 
 import "time"
 
-type MusicToAdd struct {
+type ToAdd struct {
 	Song        string `json:"song" db:"song"`
 	Group       string `json:"group" db:"music_group"`
 	Text        string `json:"text" db:"text_song"`
@@ -10,7 +10,7 @@ type MusicToAdd struct {
 	ReleaseDate string `json:"releaseDate" db:"release_date"`
 }
 
-type MusicToUpdate struct {
+type ToUpdate struct {
 	Song        string `json:"song" db:"song"`
 	Group       string `json:"group" db:"music_group"`
 	Text        string `json:"text" db:"text_song"`
@@ -18,12 +18,12 @@ type MusicToUpdate struct {
 	ReleaseDate string `json:"releaseDate" db:"release_date"`
 }
 
-type MusicToDelete struct {
+type ToDelete struct {
 	Song  string `json:"song" db:"song"`
 	Group string `json:"group" db:"music_group"`
 }
 
-type MusicToGet struct {
+type ToGet struct {
 	Id          int    `json:"id" db:"id"`
 	Song        string `json:"song" db:"song"`
 	Group       string `json:"group" db:"music_group"`
@@ -31,7 +31,7 @@ type MusicToGet struct {
 	ReleaseDate string `json:"releaseDate" db:"release_date"`
 }
 
-type MusicFilterParams struct {
+type FilterParams struct {
 	Song        string    `json:"song"`
 	Group       string    `json:"group"`
 	Text        string    `json:"text"`
@@ -39,8 +39,8 @@ type MusicFilterParams struct {
 	ReleaseDate time.Time `json:"releaseDate"`
 }
 
-func NewMusicFilterParams(song, group, text, link string, releaseDate time.Time) MusicFilterParams {
-	return MusicFilterParams{
+func NewMusicFilterParams(song, group, text, link string, releaseDate time.Time) FilterParams {
+	return FilterParams{
 		Song:        song,
 		Group:       group,
 		Text:        text,

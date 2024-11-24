@@ -1,10 +1,8 @@
-package services
+package music
 
-import (
-	"library-music/internal/domain"
-)
+import "library-music/internal/domain"
 
-type Music interface {
+type Repo interface {
 	Add(music domain.Music) (int, error)
 	Delete(musicId int) error
 	Update(music domain.Music, id int) (domain.Music, error)

@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"library-music/internal/services"
 	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
@@ -30,13 +29,13 @@ const (
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
-	var input services.MusicToAdd
+	var input music.ToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	id, err := h.service.Add(input)
+	id, err := h.service.Music.Add(input)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicExists) {
 			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
@@ -72,7 +71,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	var input services.MusicToUpdate
+	var input music.ToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -85,7 +84,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	}
 
 	input.ReleaseDate = date.Format("2006-01-02")
-	song, err := h.service.Update(input, id)
+	song, err := h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
@@ -119,7 +118,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Delete(id)
+	err = h.service.Music.Delete(id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
@@ -166,14 +165,14 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		}
 	}
 
-	filters := services.NewMusicFilterParams(song, group, link, text, date)
+	filters := music.NewMusicFilterParams(song, group, link, text, date)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	musics, err := h.service.GetAll(filters, page)
+	musics, err := h.service.Music.GetAll(filters, page)
 	if err != nil {
 		if errors.Is(err, music.ErrInvalidCredentials) {
 			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidCredentials)
@@ -207,7 +206,7 @@ func (h *Handler) checkedDate(date string) (time.Time, error) {
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
-	msc, err := h.service.Get(song, group)
+	msc, err := h.service.Music.Get(song, group)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
@@ -244,7 +243,7 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 		return
 	}
 
-	text, err := h.service.GetText(song, group, page)
+	text, err := h.service.Music.GetText(song, group, page)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
