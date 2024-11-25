@@ -14,10 +14,17 @@ type MusicToAdd struct {
 }
 
 type MusicToUpdate struct {
-	Song        string `json:"song,omitempty" db:"song" validate:"required"`
-	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	Link        string `json:"link,omitempty" db:"link" validate:"required,url"`
-	ReleaseDate string `json:"releaseDate,omitempty" db:"release_date" validate:"required,datetime=02-01-2006"`
+	Song        string `json:"song,required" db:"song" validate:"required"`
+	Text        string `json:"text,required" db:"text_song" validate:"required"`
+	Link        string `json:"link,required" db:"link" validate:"required,url"`
+	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime=02-01-2006"`
+}
+
+type MusicToPartialUpdate struct {
+	Song        *string `json:"song,omitempty" db:"song" validate:"omitempty"`
+	Text        *string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
+	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url"`
+	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime=02-01-2006"`
 }
 
 type MusicToGet struct {

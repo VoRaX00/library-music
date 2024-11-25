@@ -138,7 +138,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body services.MusicToUpdate true "Music info to update"
+// @Param input body services.MusicToPartialUpdate true "Music info to update"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
@@ -146,7 +146,62 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/update [patch]
 func (h *Handler) UpdatePartialMusic(c *gin.Context) {
-	h.UpdateMusic(c)
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
+	var input services.MusicToPartialUpdate
+	if err = c.ShouldBindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
+	err = validateParams(input)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	upd := partialToDefault(input)
+
+	err = h.service.Music.Update(upd, id)
+	if err != nil {
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			return
+		}
+
+		if errors.Is(err, music.ErrMusicAlreadyExists) {
+			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+			return
+		}
+
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": "success",
+	})
+}
+
+func partialToDefault(update services.MusicToPartialUpdate) services.MusicToUpdate {
+	upd := services.MusicToUpdate{}
+	if update.Song != nil {
+		upd.Song = *update.Song
+	}
+	if update.Text != nil {
+		upd.Text = *update.Text
+	}
+	if update.Link != nil {
+		upd.Link = *update.Link
+	}
+	if update.ReleaseDate != nil {
+		upd.ReleaseDate = *update.ReleaseDate
+	}
+	return upd
 }
 
 // @Summary DeleteMusic

@@ -40,6 +40,17 @@ definitions:
     - releaseDate
     - song
     type: object
+  services.MusicToPartialUpdate:
+    properties:
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
   services.MusicToUpdate:
     properties:
       link:
@@ -52,8 +63,8 @@ definitions:
         type: string
     required:
     - link
-    - releaseDate
     - song
+    - text
     type: object
 host: localhost:8090
 info:
@@ -307,7 +318,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/services.MusicToUpdate'
+          $ref: '#/definitions/services.MusicToPartialUpdate'
       produces:
       - application/json
       responses:

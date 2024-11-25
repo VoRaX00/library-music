@@ -463,7 +463,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/services.MusicToUpdate"
+                            "$ref": "#/definitions/services.MusicToPartialUpdate"
                         }
                     }
                 ],
@@ -578,12 +578,29 @@ const docTemplate = `{
                 }
             }
         },
+        "services.MusicToPartialUpdate": {
+            "type": "object",
+            "properties": {
+                "link": {
+                    "type": "string"
+                },
+                "releaseDate": {
+                    "type": "string"
+                },
+                "song": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
         "services.MusicToUpdate": {
             "type": "object",
             "required": [
                 "link",
-                "releaseDate",
-                "song"
+                "song",
+                "text"
             ],
             "properties": {
                 "link": {

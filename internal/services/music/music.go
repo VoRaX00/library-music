@@ -37,7 +37,7 @@ func (s *Music) Add(music services.MusicToAdd) (int, error) {
 
 	data, err := s.mapper.AddToMusic(music)
 	if err != nil {
-		log.Info("invalid credentials", err.Error())
+		log.Info("error mapping", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -85,7 +85,7 @@ func (s *Music) Update(music services.MusicToUpdate, id int) error {
 
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
-		log.Info("invalid credentials", err.Error())
+		log.Info("error mapping", err.Error())
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
