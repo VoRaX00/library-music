@@ -172,7 +172,7 @@ func generateQuery(params models.Music, page int) (string, []interface{}) {
 	}
 
 	if params.Link != "" {
-		args = append(args, params.Text)
+		args = append(args, params.Link)
 		if isWhere {
 			query += " AND link=" + fmt.Sprintf("$%d", len(args))
 		} else {

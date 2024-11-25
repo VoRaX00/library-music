@@ -21,6 +21,7 @@ func (m *MusicMapper) FilterToMusic(object services.MusicFilterParams) models.Mu
 
 func (m *MusicMapper) MusicForGet(object models.Music) services.MusicToGet {
 	return services.MusicToGet{
+		Id:          object.Id,
 		Song:        object.Song,
 		Group:       object.Group,
 		Link:        object.Link,
