@@ -59,6 +59,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -407,6 +416,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -477,6 +495,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -527,6 +554,12 @@ const docTemplate = `{
         },
         "services.MusicToAdd": {
             "type": "object",
+            "required": [
+                "group",
+                "link",
+                "releaseDate",
+                "song"
+            ],
             "properties": {
                 "group": {
                     "type": "string"
@@ -547,6 +580,11 @@ const docTemplate = `{
         },
         "services.MusicToUpdate": {
             "type": "object",
+            "required": [
+                "link",
+                "releaseDate",
+                "song"
+            ],
             "properties": {
                 "link": {
                     "type": "string"

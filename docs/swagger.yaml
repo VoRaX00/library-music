@@ -34,6 +34,11 @@ definitions:
         type: string
       text:
         type: string
+    required:
+    - group
+    - link
+    - releaseDate
+    - song
     type: object
   services.MusicToUpdate:
     properties:
@@ -45,6 +50,10 @@ definitions:
         type: string
       text:
         type: string
+    required:
+    - link
+    - releaseDate
+    - song
     type: object
 host: localhost:8090
 info:
@@ -77,6 +86,12 @@ paths:
             type: object
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
           schema:
             additionalProperties:
               type: string
@@ -314,6 +329,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: Internal Server Error
           schema:
@@ -357,6 +378,12 @@ paths:
             type: object
         "404":
           description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
           schema:
             additionalProperties:
               type: string
