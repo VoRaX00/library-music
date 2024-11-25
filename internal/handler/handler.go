@@ -26,6 +26,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 	{
 		api.POST("/add", h.AddMusic)
 		api.PUT("/update", h.UpdateMusic)
+		api.PATCH("/updatePartial")
 		api.DELETE("/delete", h.DeleteMusic)
 		api.GET("/info", h.GetMusic)
 		api.GET("/getAll", h.GetMusicList)

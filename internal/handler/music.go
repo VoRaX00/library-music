@@ -92,6 +92,53 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	})
 }
 
+// @Summary UpdatePartialMusic
+// @Tags music
+// @Description update partial music
+// @ID update-partial-music
+// @Accept json
+// @Produce json
+// @Param id query int true "Id song"
+// @Param input body services.MusicToUpdate true "Music info to update"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/update [put]
+func (h *Handler) UpdatePartialMusic(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
+	var input services.MusicToUpdate
+	if err = c.ShouldBindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
+	date, err := h.checkedDate(input.ReleaseDate)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	input.ReleaseDate = date.Format("2006-01-02")
+	err = h.service.Music.Update(input, id)
+	if err != nil {
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+		}
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": "success",
+	})
+}
+
 // @Summary DeleteMusic
 // @Tags music
 // @Description delete music
