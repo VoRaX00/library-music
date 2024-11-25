@@ -1,6 +1,9 @@
 package services
 
-import "time"
+import (
+	"library-music/internal/domain/models"
+	"time"
+)
 
 type MusicToAdd struct {
 	Song        string `json:"song" db:"song"`
@@ -24,11 +27,11 @@ type MusicToDelete struct {
 }
 
 type MusicToGet struct {
-	Id          int    `json:"id" db:"id"`
-	Song        string `json:"song" db:"song"`
-	Group       string `json:"group" db:"music_group"`
-	Link        string `json:"link" db:"link"`
-	ReleaseDate string `json:"releaseDate" db:"release_date"`
+	Id          int          `json:"id" db:"id"`
+	Song        string       `json:"song" db:"song"`
+	Group       models.Group `json:"group" db:"music_group"`
+	Link        string       `json:"link" db:"link"`
+	ReleaseDate string       `json:"releaseDate" db:"release_date"`
 }
 
 type MusicFilterParams struct {

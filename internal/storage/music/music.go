@@ -29,7 +29,7 @@ func (r *Music) Add(music models.Music) (int, error) {
 		return -1, fmt.Errorf("%s: %w", op, err)
 	}
 
-	err = r.insertGroup(tx, music.Group)
+	err = r.insertGroup(tx, music.Group.Name)
 	if err != nil {
 		_ = tx.Rollback()
 		return -1, fmt.Errorf("%s: %w", op, err)
@@ -46,7 +46,7 @@ func (r *Music) Add(music models.Music) (int, error) {
 		SELECT $2, g.id FROM group_cte g
 		ON CONFLICT DO NOTHING;`
 
-	_, err = tx.Exec(query, music.Group, musicId)
+	_, err = tx.Exec(query, music.Group.Name, musicId)
 	if err != nil {
 		_ = tx.Rollback()
 		return -1, fmt.Errorf("%s: %w", op, err)
@@ -195,7 +195,7 @@ func (r *Music) Get(song, group string) (models.Music, error) {
 	FROM music m 
 	JOIN music_groups mg ON m.id = mg.music_id 
     JOIN groups g ON mg.group_id = g.id 
-	WHERE m.song = ? AND g.name = ?`
+	WHERE m.song = $1 AND g.name = $2`
 
 	err := r.db.Get(&foundMusic, query, song, group)
 	if err != nil {
