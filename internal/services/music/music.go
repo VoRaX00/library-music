@@ -43,6 +43,7 @@ func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	log.Info("adding a song")
 	id, err := s.repo.Add(data)
 	if err != nil {
+
 		log.Error("failed to add a song", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}

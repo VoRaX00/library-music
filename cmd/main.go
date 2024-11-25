@@ -44,7 +44,7 @@ func main() {
 	sig := <-quit
 	log.Info("stopping server", slog.String("signal", sig.String()))
 
-	application.Server.Stop(context.Background())
+	application.Stop(context.Background())
 	log.Info("server stopped")
 }
 

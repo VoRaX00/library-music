@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -15,6 +16,7 @@ import (
 
 type App struct {
 	Server *server.Server
+	DB     *sqlx.DB
 }
 
 func New(log *slog.Logger, storagePath string, port string) *App {
@@ -23,10 +25,6 @@ func New(log *slog.Logger, storagePath string, port string) *App {
 		log.Warn(err.Error())
 	}
 
-	defer func() {
-		_ = db.Close()
-	}()
-
 	repos := storage.NewRepository(db)
 	srs := di.NewService(log, repos)
 	handlers := handler.NewHandler(log, srs)
@@ -34,7 +32,16 @@ func New(log *slog.Logger, storagePath string, port string) *App {
 	srv := server.New(log, port, handlers.InitRouter())
 	return &App{
 		Server: srv,
+		DB:     db,
 	}
+}
+
+func (a *App) Stop(ctx context.Context) {
+	err := a.DB.Close()
+	if err != nil {
+		slog.Error(err.Error())
+	}
+	a.Server.Stop(ctx)
 }
 
 func connectDB(storagePath string) (*sqlx.DB, error) {

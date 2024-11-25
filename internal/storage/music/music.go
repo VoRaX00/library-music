@@ -46,19 +46,24 @@ func (r *Music) Add(music models.Music) (int, error) {
 		SELECT $2, g.id FROM group_cte g
 		ON CONFLICT DO NOTHING;`
 
-	row := tx.QueryRow(query, music.Group, musicId)
-	if row.Err() != nil {
+	_, err = tx.Exec(query, music.Group, musicId)
+	if err != nil {
 		_ = tx.Rollback()
-		return -1, fmt.Errorf("%s: %w", op, row.Err())
+		return -1, fmt.Errorf("%s: %w", op, err)
 	}
-	return musicId, tx.Commit()
+
+	if err = tx.Commit(); err != nil {
+		_ = tx.Rollback()
+		return -1, fmt.Errorf("%s: %w", op, err)
+	}
+	return musicId, nil
 }
 
 func (r *Music) insertMusic(tx *sqlx.Tx, music models.Music) (int, error) {
 	query := `INSERT INTO music (song, text_song, release_date, link) VALUES ($1, $2, $3, $4) RETURNING id;`
 
 	var musicId int
-	row := tx.QueryRow(query, &music.Song, &music.Text, &music.ReleaseDate, &music.Link)
+	row := tx.QueryRow(query, music.Song, music.Text, music.ReleaseDate, music.Link)
 	if err := row.Scan(&musicId); err != nil {
 		return -1, err
 	}
@@ -67,8 +72,8 @@ func (r *Music) insertMusic(tx *sqlx.Tx, music models.Music) (int, error) {
 
 func (r *Music) insertGroup(tx *sqlx.Tx, groupName string) error {
 	query := `INSERT INTO groups (name) VALUES ($1) ON CONFLICT DO NOTHING;`
-	row := tx.QueryRow(query, groupName)
-	return row.Err()
+	_, err := tx.Exec(query, groupName)
+	return err
 }
 
 func (r *Music) Delete(id int) error {

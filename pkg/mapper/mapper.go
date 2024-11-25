@@ -29,7 +29,7 @@ func (m *MusicMapper) MusicForGet(object models.Music) services.MusicToGet {
 }
 
 func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music, error) {
-	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
+	date, err := time.Parse("02-01-2006", object.ReleaseDate)
 	if err != nil {
 		return models.Music{}, err
 	}
@@ -43,7 +43,7 @@ func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music
 }
 
 func (m *MusicMapper) AddToMusic(object services.MusicToAdd) (models.Music, error) {
-	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
+	date, err := time.Parse("02-01-2006", object.ReleaseDate)
 	if err != nil {
 		return models.Music{}, err
 	}
