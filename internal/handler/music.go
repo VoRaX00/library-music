@@ -25,7 +25,6 @@ const (
 // @Param input body services.MusicToAdd true "Music info to add"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
-// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
