@@ -37,8 +37,6 @@ definitions:
     type: object
   services.MusicToUpdate:
     properties:
-      group:
-        type: string
       link:
         type: string
       releaseDate:
@@ -281,8 +279,8 @@ paths:
     put:
       consumes:
       - application/json
-      description: update music
-      operationId: update-music
+      description: update partial music
+      operationId: update-partial-music
       parameters:
       - description: Id song
         in: query
@@ -322,7 +320,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: UpdateMusic
+      summary: UpdatePartialMusic
       tags:
       - music
 swagger: "2.0"

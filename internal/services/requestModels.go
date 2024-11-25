@@ -15,7 +15,6 @@ type MusicToAdd struct {
 
 type MusicToUpdate struct {
 	Song        string `json:"song,omitempty" db:"song"`
-	Group       string `json:"group,omitempty" db:"music_group"`
 	Text        string `json:"text,omitempty" db:"text_song"`
 	Link        string `json:"link,omitempty" db:"link"`
 	ReleaseDate string `json:"releaseDate,omitempty" db:"release_date"`

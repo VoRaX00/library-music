@@ -349,7 +349,7 @@ const docTemplate = `{
         },
         "/api/update": {
             "put": {
-                "description": "update music",
+                "description": "update partial music",
                 "consumes": [
                     "application/json"
                 ],
@@ -359,8 +359,8 @@ const docTemplate = `{
                 "tags": [
                     "music"
                 ],
-                "summary": "UpdateMusic",
-                "operationId": "update-music",
+                "summary": "UpdatePartialMusic",
+                "operationId": "update-partial-music",
                 "parameters": [
                     {
                         "type": "integer",
@@ -478,9 +478,6 @@ const docTemplate = `{
         "services.MusicToUpdate": {
             "type": "object",
             "properties": {
-                "group": {
-                    "type": "string"
-                },
                 "link": {
                     "type": "string"
                 },

@@ -36,7 +36,6 @@ func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music
 	}
 	return models.Music{
 		Song:        object.Song,
-		Group:       models.Group{Name: object.Group},
 		Text:        object.Text,
 		Link:        object.Link,
 		ReleaseDate: date,
