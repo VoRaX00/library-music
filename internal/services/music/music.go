@@ -17,8 +17,7 @@ type Music struct {
 }
 
 var (
-	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrMusicNotFound      = errors.New("music not found")
+	ErrMusicNotFound = errors.New("music not found")
 )
 
 func New(log *slog.Logger, repo Repo) *Music {
@@ -38,13 +37,12 @@ func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	data, err := s.mapper.AddToMusic(music)
 	if err != nil {
 		log.Info("invalid credentials", err.Error())
-		return 0, fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	log.Info("adding a song")
 	id, err := s.repo.Add(data)
 	if err != nil {
-
 		log.Error("failed to add a song", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -82,17 +80,16 @@ func (s *Music) Update(music services.MusicToUpdate, id int) error {
 	data, err := s.mapper.UpdateToMusic(music)
 	if err != nil {
 		log.Info("invalid credentials", err.Error())
-		return fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	log.Info("updating a song")
 	err = s.repo.Update(data, id)
 	if err != nil {
-		if errors.Is(err, ErrMusicNotFound) {
+		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
 			return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
-
 		log.Error("failed to update a song", err.Error())
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -109,7 +106,10 @@ func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.
 	log.Info("fetching all songs")
 	res, err := s.repo.GetAll(s.mapper.FilterToMusic(params), page)
 	if err != nil {
-		log.Error("failed to get all songs", err.Error())
+		if errors.Is(err, musicrepo.ErrMusicNotFound) {
+			log.Error("failed to get all songs", err.Error())
+			return nil, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -130,7 +130,7 @@ func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	log.Info("fetching a song")
 	music, err := s.repo.Get(song, group)
 	if err != nil {
-		if errors.Is(err, ErrMusicNotFound) {
+		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
 			return services.MusicToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
@@ -150,7 +150,7 @@ func (s *Music) GetText(song, group string, page int) (string, error) {
 	log.Info("fetching a song")
 	text, err := s.repo.GetText(song, group)
 	if err != nil {
-		if errors.Is(err, ErrMusicNotFound) {
+		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", ErrMusicNotFound)
 			return "", fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}

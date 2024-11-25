@@ -167,7 +167,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 
 	musics, err := h.service.Music.GetAll(filters, page)
 	if err != nil {
-		if errors.Is(err, music.ErrInvalidCredentials) {
+		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
