@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Server for Library music services",
+        "description": "API Server for Library music service",
         "title": "Library music API",
         "contact": {},
         "version": "1.0"
@@ -415,11 +415,22 @@
         }
     },
     "definitions": {
+        "models.Group": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Music": {
             "type": "object",
             "properties": {
                 "group": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.Group"
                 },
                 "id": {
                     "type": "integer"

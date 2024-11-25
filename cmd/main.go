@@ -18,10 +18,10 @@ const (
 	envProd  = "prod"
 )
 
-// @title Library music API
-// @version 1.0
-// @description API Server for Library music services
-// @host localhost:8090
+// @Title Library music API
+// @Version 1.0
+// @Description API Server for Library music service
+// @Host localhost:8090
 // @BasePath /
 func main() {
 	if err := godotenv.Load(); err != nil {

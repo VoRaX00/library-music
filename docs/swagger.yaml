@@ -1,9 +1,16 @@
 basePath: /
 definitions:
+  models.Group:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   models.Music:
     properties:
       group:
-        type: string
+        $ref: '#/definitions/models.Group'
       id:
         type: integer
       link:
@@ -44,7 +51,7 @@ definitions:
 host: localhost:8090
 info:
   contact: {}
-  description: API Server for Library music services
+  description: API Server for Library music service
   title: Library music API
   version: "1.0"
 paths:

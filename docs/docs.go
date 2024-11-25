@@ -421,11 +421,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Group": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Music": {
             "type": "object",
             "properties": {
                 "group": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.Group"
                 },
                 "id": {
                     "type": "integer"
@@ -494,7 +505,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Library music API",
-	Description:      "API Server for Library music services",
+	Description:      "API Server for Library music service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
