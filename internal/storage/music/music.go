@@ -151,51 +151,69 @@ func (r *Music) GetAll(params models.Music, page int) ([]models.Music, error) {
 }
 
 func generateQuery(params models.Music, page int) (string, []interface{}) {
-	query := `SELECT id, song, link, release_date FROM music`
-	var args []interface{}
+	query := `SELECT m.*, 
+       g.id AS "group.id",
+       g.name AS "group.name"
+       FROM music m
+       LEFT JOIN music_groups mg ON mg.music_id = m.id
+       LEFT JOIN groups g ON g.id = mg.group_id`
 
+	var args []interface{}
 	isWhere := false
+
 	if params.Song != "" {
 		args = append(args, params.Song)
-		query += " WHERE song=" + fmt.Sprintf("$%d", len(args))
+		query += addCondition("m.song", len(args), false)
 		isWhere = true
 	}
 
 	if params.Text != "" {
 		args = append(args, params.Text)
-		if isWhere {
-			query += " AND text_song=" + fmt.Sprintf("$%d", len(args))
-		} else {
-			query += " WHERE text_song=" + fmt.Sprintf("$%d", len(args))
-			isWhere = true
-		}
+		query += addCondition("m.text_song", len(args), isWhere)
+		isWhere = true
 	}
 
 	if params.Link != "" {
 		args = append(args, params.Link)
-		if isWhere {
-			query += " AND link=" + fmt.Sprintf("$%d", len(args))
-		} else {
-			query += " WHERE link=" + fmt.Sprintf("$%d", len(args))
-			isWhere = true
-		}
+		query += addCondition("m.link", len(args), isWhere)
+		isWhere = true
+	}
+
+	if params.Group.Name != "" {
+		args = append(args, params.Group.Name)
+		query += addCondition("g.name", len(args), isWhere)
+		isWhere = true
+	}
+
+	if !params.ReleaseDate.IsZero() {
+		args = append(args, params.ReleaseDate)
+		query += addCondition("m.release_date", len(args), isWhere)
+		isWhere = true
 	}
 
 	offset := (page - 1) * pageSize
-
-	query += " LIMIT " + fmt.Sprintf("%d", pageSize) + " OFFSET " + fmt.Sprintf("%d", offset)
+	query += fmt.Sprintf(" LIMIT %d OFFSET %d", pageSize, offset)
 	return query, args
+}
+
+func addCondition(field string, paramIndex int, isWhere bool) string {
+	condition := fmt.Sprintf("%s = $%d", field, paramIndex)
+	if isWhere {
+		return " AND " + condition
+	}
+	return " WHERE " + condition
 }
 
 func (r *Music) Get(song, group string) (models.Music, error) {
 	const op = "storage.music.Get"
 
 	var foundMusic models.Music
-	query := `SELECT m.*, g.name
-	FROM music m 
-	JOIN music_groups mg ON m.id = mg.music_id 
+	query := `SELECT m.*, g.id AS "group.id",
+        g.name AS "group.name"
+    FROM music m 
+    JOIN music_groups mg ON m.id = mg.music_id 
     JOIN groups g ON mg.group_id = g.id 
-	WHERE m.song = $1 AND g.name = $2`
+    WHERE m.song = $1 AND g.name = $2`
 
 	err := r.db.Get(&foundMusic, query, song, group)
 	if err != nil {

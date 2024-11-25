@@ -133,6 +133,7 @@ func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 			log.Warn("music not found", err.Error())
 			return services.MusicToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
+		log.Error("failed to get a song", err.Error())
 		return services.MusicToGet{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully fetched a song")

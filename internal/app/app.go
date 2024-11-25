@@ -45,8 +45,6 @@ func (a *App) Stop(ctx context.Context) {
 }
 
 func connectDB(storagePath string) (*sqlx.DB, error) {
-	//fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-	//		cfg.DB.Host, cfg.DB.Port, cfg.DB.Username, cfg.DB.DBName, cfg.DB.Password, cfg.DB.SSLMode)
 	db, err := postgres.New(storagePath)
 	if err != nil {
 		panic("error connecting to database: " + err.Error())
