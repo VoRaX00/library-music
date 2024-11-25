@@ -71,13 +71,13 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	date, err := h.checkedDate(input.ReleaseDate)
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	input.ReleaseDate = date.Format("2006-01-02")
+	//date, err := h.checkedDate(input.ReleaseDate)
+	//if err != nil {
+	//	NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+	//	return
+	//}
+	//
+	//input.ReleaseDate = date.Format("2006-01-02")
 	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
@@ -104,7 +104,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/update [put]
+// @Router /api/update [patch]
 func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {

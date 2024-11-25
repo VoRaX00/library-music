@@ -276,7 +276,7 @@ paths:
       tags:
       - music
   /api/update:
-    put:
+    patch:
       consumes:
       - application/json
       description: update partial music
@@ -321,6 +321,53 @@ paths:
               type: string
             type: object
       summary: UpdatePartialMusic
+      tags:
+      - music
+    put:
+      consumes:
+      - application/json
+      description: update music
+      operationId: update-music
+      parameters:
+      - description: Id song
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Music info to update
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/services.MusicToUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: UpdateMusic
       tags:
       - music
 swagger: "2.0"
