@@ -183,7 +183,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	})
 }
 
-// @Summary GetAllMusic
+// @Summary GetMusicList
 // @Tags music
 // @Description get all music
 // @ID get-all-music

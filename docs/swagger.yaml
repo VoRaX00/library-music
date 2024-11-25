@@ -196,7 +196,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: GetAllMusic
+      summary: GetMusicList
       tags:
       - music
   /api/getText:

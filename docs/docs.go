@@ -155,7 +155,7 @@ const docTemplate = `{
                 "tags": [
                     "music"
                 ],
-                "summary": "GetAllMusic",
+                "summary": "GetMusicList",
                 "operationId": "get-all-music",
                 "parameters": [
                     {
