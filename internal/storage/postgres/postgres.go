@@ -4,9 +4,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Config struct {
-}
-
 func New(storagePath string) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", storagePath)
 	if err != nil {
@@ -17,6 +14,5 @@ func New(storagePath string) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return db, nil
 }

@@ -7,7 +7,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 	"library-music/internal/app/server"
-	"library-music/internal/di"
 	"library-music/internal/handler"
 	"library-music/internal/storage"
 	"library-music/internal/storage/postgres"
@@ -26,7 +25,7 @@ func New(log *slog.Logger, storagePath string, port string) *App {
 	}
 
 	repos := storage.NewRepository(db)
-	srs := di.NewService(log, repos)
+	srs := handler.NewService(log, repos)
 	handlers := handler.NewHandler(srs)
 
 	srv := server.New(log, port, handlers.InitRouter())

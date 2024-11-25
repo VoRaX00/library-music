@@ -1,4 +1,4 @@
-package di
+package handler
 
 import (
 	"library-music/internal/services"

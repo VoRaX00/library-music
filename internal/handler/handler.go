@@ -5,14 +5,13 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "library-music/docs"
-	"library-music/internal/di"
 )
 
 type Handler struct {
-	service *di.Service
+	service *Service
 }
 
-func NewHandler(service *di.Service) *Handler {
+func NewHandler(service *Service) *Handler {
 	return &Handler{
 		service: service,
 	}

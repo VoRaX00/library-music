@@ -2,7 +2,7 @@ package storage
 
 import (
 	"github.com/jmoiron/sqlx"
-	musicrepo "library-music/internal/storage/music"
+	"library-music/internal/storage/music"
 )
 
 type Repository struct {
