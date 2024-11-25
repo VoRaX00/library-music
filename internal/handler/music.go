@@ -13,7 +13,6 @@ import (
 const (
 	ErrInvalidArguments   = "invalid arguments"
 	ErrInvalidCredentials = "invalid credentials"
-	ErrAlreadyExists      = "already exists"
 	ErrInternalServer     = "internal server error"
 )
 
@@ -23,7 +22,7 @@ const (
 // @ID create-music
 // @Accept json
 // @Produce json
-// @Param input body domain.MusicToAdd true "Music info to add"
+// @Param input body services.MusicToAdd true "Music info to add"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 409 {object} map[string]string
@@ -38,11 +37,6 @@ func (h *Handler) AddMusic(c *gin.Context) {
 
 	id, err := h.service.Music.Add(input)
 	if err != nil {
-		if errors.Is(err, music.ErrMusicExists) {
-			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
-			return
-		}
-
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -59,7 +53,7 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body domain.MusicToUpdate true "Music info to update"
+// @Param input body services.MusicToUpdate true "Music info to update"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
@@ -144,7 +138,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Param link query string false "Link song"
 // @Param text query string false "Text song"
 // @Param page query int true "Page number"
-// @Success 200 {object} map[string]domain.Music
+// @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/getAll [get]
@@ -198,7 +192,7 @@ func (h *Handler) checkedDate(date string) (time.Time, error) {
 // @Produce json
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
-// @Success 200 {object} domain.Music
+// @Success 200 {object} models.Music
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string

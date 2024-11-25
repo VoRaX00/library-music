@@ -19,10 +19,10 @@ const docTemplate = `{
             "post": {
                 "description": "Create a new music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.MusicToAdd"
+                            "$ref": "#/definitions/services.MusicToAdd"
                         }
                     }
                 ],
@@ -52,6 +52,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -75,10 +84,10 @@ const docTemplate = `{
             "delete": {
                 "description": "delete music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -113,6 +122,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -129,10 +147,10 @@ const docTemplate = `{
             "get": {
                 "description": "get all music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -178,7 +196,16 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
-                                "$ref": "#/definitions/domain.Music"
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
@@ -198,10 +225,10 @@ const docTemplate = `{
             "get": {
                 "description": "get text music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -266,10 +293,10 @@ const docTemplate = `{
             "get": {
                 "description": "get music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -296,11 +323,20 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Music"
+                            "$ref": "#/definitions/models.Music"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -324,10 +360,10 @@ const docTemplate = `{
             "put": {
                 "description": "update music",
                 "consumes": [
-                    "services/json"
+                    "application/json"
                 ],
                 "produces": [
-                    "services/json"
+                    "application/json"
                 ],
                 "tags": [
                     "music"
@@ -348,7 +384,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.MusicToUpdate"
+                            "$ref": "#/definitions/services.MusicToUpdate"
                         }
                     }
                 ],
@@ -371,6 +407,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -385,7 +430,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Music": {
+        "models.Music": {
             "type": "object",
             "properties": {
                 "group": {
@@ -408,7 +453,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.MusicToAdd": {
+        "services.MusicToAdd": {
             "type": "object",
             "properties": {
                 "group": {
@@ -428,7 +473,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.MusicToUpdate": {
+        "services.MusicToUpdate": {
             "type": "object",
             "properties": {
                 "group": {

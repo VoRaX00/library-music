@@ -17,7 +17,6 @@ type Music struct {
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrMusicExists        = errors.New("music already exists")
 	ErrMusicNotFound      = errors.New("music not found")
 )
 
@@ -44,10 +43,6 @@ func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	log.Info("adding a song")
 	id, err := s.repo.Add(data)
 	if err != nil {
-		if errors.Is(err, ErrMusicExists) {
-			log.Warn("music already exists", err.Error())
-		}
-
 		log.Error("failed to add a song", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}

@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Server for Library music application",
+        "description": "API Server for Library music services",
         "title": "Library music API",
         "contact": {},
         "version": "1.0"
@@ -30,7 +30,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.MusicToAdd"
+                            "$ref": "#/definitions/services.MusicToAdd"
                         }
                     }
                 ],
@@ -46,6 +46,15 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -100,6 +109,15 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -172,7 +190,16 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
-                                "$ref": "#/definitions/domain.Music"
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
@@ -290,11 +317,20 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Music"
+                            "$ref": "#/definitions/models.Music"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -342,7 +378,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.MusicToUpdate"
+                            "$ref": "#/definitions/services.MusicToUpdate"
                         }
                     }
                 ],
@@ -365,6 +401,15 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -379,7 +424,7 @@
         }
     },
     "definitions": {
-        "domain.Music": {
+        "models.Music": {
             "type": "object",
             "properties": {
                 "group": {
@@ -402,7 +447,7 @@
                 }
             }
         },
-        "domain.MusicToAdd": {
+        "services.MusicToAdd": {
             "type": "object",
             "properties": {
                 "group": {
@@ -422,7 +467,7 @@
                 }
             }
         },
-        "domain.MusicToUpdate": {
+        "services.MusicToUpdate": {
             "type": "object",
             "properties": {
                 "group": {

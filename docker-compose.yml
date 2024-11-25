@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: library-music
       PG_DATA: /var/lib/postgresql/data/
     ports:
-      - 5431:5432
+      - 5483:5432
     volumes:
       - db:/var/lib/postgresql/data/
 volumes:

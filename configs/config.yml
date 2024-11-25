@@ -2,8 +2,8 @@ server:
   port: "8090"
 db:
   host: "localhost"
-  port: "5431"
-  name: "library_music_db"
+  port: "5483"
+  name: "library-music"
   username: "postgres"
   ssl_mode: "disable"
 env: "local"
