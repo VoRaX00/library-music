@@ -6,17 +6,14 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "library-music/docs"
 	"library-music/internal/di"
-	"log/slog"
 )
 
 type Handler struct {
-	log     *slog.Logger
 	service *di.Service
 }
 
-func NewHandler(log *slog.Logger, service *di.Service) *Handler {
+func NewHandler(service *di.Service) *Handler {
 	return &Handler{
-		log:     log,
 		service: service,
 	}
 }

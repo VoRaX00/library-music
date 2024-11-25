@@ -27,7 +27,7 @@ func New(log *slog.Logger, storagePath string, port string) *App {
 
 	repos := storage.NewRepository(db)
 	srs := di.NewService(log, repos)
-	handlers := handler.NewHandler(log, srs)
+	handlers := handler.NewHandler(srs)
 
 	srv := server.New(log, port, handlers.InitRouter())
 	return &App{
