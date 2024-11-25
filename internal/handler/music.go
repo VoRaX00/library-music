@@ -169,10 +169,12 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
+			return
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"musics": musics,
 	})
@@ -205,10 +207,10 @@ func (h *Handler) GetMusic(c *gin.Context) {
 			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
-
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"music": msc,
 	})
