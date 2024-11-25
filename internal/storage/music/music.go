@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	ErrMusicNotFound  = errors.New("music not found")
-	ErrEmptyArguments = errors.New("empty arguments")
+	ErrMusicNotFound      = errors.New("music not found")
+	ErrMusicAlreadyExists = errors.New("music already exists")
+	ErrEmptyArguments     = errors.New("empty arguments")
 )
 
 type Music struct {
@@ -36,6 +37,17 @@ func (r *Music) Add(music models.Music) (int, error) {
 	if err != nil {
 		_ = tx.Rollback()
 		return -1, fmt.Errorf("%s: %w", op, err)
+	}
+
+	exists, err := r.checkSongInGroup(tx, music.Song, music.Group.Name)
+	if err != nil {
+		_ = tx.Rollback()
+		return -1, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if exists {
+		_ = tx.Rollback()
+		return -1, fmt.Errorf("%s: %w", op, ErrMusicAlreadyExists)
 	}
 
 	musicId, err := r.insertMusic(tx, music)
@@ -79,6 +91,23 @@ func (r *Music) insertGroup(tx *sqlx.Tx, groupName string) error {
 	return err
 }
 
+func (r *Music) checkSongInGroup(tx *sqlx.Tx, song, groupName string) (bool, error) {
+	query := `SELECT EXISTS (
+		SELECT 1
+		FROM music m 
+		JOIN music_groups mg ON m.id = mg.music_id
+		JOIN groups g ON mg.group_id = g.id
+		WHERE m.song = $1 AND g.name = $2
+	)`
+
+	var exists bool
+	err := tx.Get(&exists, query, song, groupName)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
 func (r *Music) Delete(id int) error {
 	const op = "storage.music.Delete"
 	query := "DELETE FROM music WHERE id=$1"
@@ -103,6 +132,17 @@ func (r *Music) Update(music models.Music, id int) error {
 	query, args := generateUpdateQuery(music, id)
 	if args == nil {
 		return fmt.Errorf("%s: %w", op, ErrEmptyArguments)
+	}
+
+	if music.Song != "" {
+		res, err := r.checkUpdateOnDuplicate(music.Song, id)
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+
+		if res {
+			return fmt.Errorf("%s: %w", op, ErrMusicAlreadyExists)
+		}
 	}
 
 	res, err := r.db.Exec(query, args...)
@@ -158,6 +198,28 @@ func isZero(value interface{}) bool {
 	default:
 		return value == nil
 	}
+}
+
+func (r *Music) checkUpdateOnDuplicate(song string, id int) (bool, error) {
+	query := `SELECT EXISTS (
+    	SELECT 1
+		FROM music m
+		JOIN music_groups mg ON m.id = mg.music_id
+		JOIN groups g ON mg.group_id = g.id
+		WHERE m.song = $1 AND m.id = (
+		    SELECT g.id
+		    FROM groups g
+		    JOIN music_groups mg ON g.id = mg.group_id
+		    WHERE mg.music_id = $2
+		) AND m.id <> $2
+	)`
+
+	var exists bool
+	err := r.db.Get(&exists, query, song, id)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }
 
 func (r *Music) GetById(id int) (models.Music, error) {

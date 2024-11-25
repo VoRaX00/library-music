@@ -17,7 +17,8 @@ type Music struct {
 }
 
 var (
-	ErrMusicNotFound = errors.New("music not found")
+	ErrMusicNotFound      = errors.New("music not found")
+	ErrMusicAlreadyExists = errors.New("music already exists")
 )
 
 func New(log *slog.Logger, repo Repo) *Music {
@@ -43,6 +44,11 @@ func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	log.Info("adding a song")
 	id, err := s.repo.Add(data)
 	if err != nil {
+		if errors.Is(err, musicrepo.ErrMusicAlreadyExists) {
+			log.Warn("music already exists", err.Error())
+			return 0, fmt.Errorf("%s: %w", op, ErrMusicAlreadyExists)
+		}
+
 		log.Error("failed to add a song", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -90,6 +96,12 @@ func (s *Music) Update(music services.MusicToUpdate, id int) error {
 			log.Warn("music not found", err.Error())
 			return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
+
+		if errors.Is(err, musicrepo.ErrMusicAlreadyExists) {
+			log.Warn("music already exists", err.Error())
+			return fmt.Errorf("%s: %w", op, ErrMusicAlreadyExists)
+		}
+
 		log.Error("failed to update a song", err.Error())
 		return fmt.Errorf("%s: %w", op, err)
 	}

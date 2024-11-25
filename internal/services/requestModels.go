@@ -6,23 +6,18 @@ import (
 )
 
 type MusicToAdd struct {
-	Song        string `json:"song" db:"song"`
-	Group       string `json:"group" db:"music_group"`
-	Text        string `json:"text" db:"text_song"`
-	Link        string `json:"link" db:"link"`
-	ReleaseDate string `json:"releaseDate" db:"release_date"`
+	Song        string `json:"song" db:"song" validate:"required"`
+	Group       string `json:"group" db:"music_group" validate:"required"`
+	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
+	Link        string `json:"link" db:"link" validate:"required,url"`
+	ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime=02-01-2006"`
 }
 
 type MusicToUpdate struct {
-	Song        string `json:"song,omitempty" db:"song"`
-	Text        string `json:"text,omitempty" db:"text_song"`
-	Link        string `json:"link,omitempty" db:"link"`
-	ReleaseDate string `json:"releaseDate,omitempty" db:"release_date"`
-}
-
-type MusicToDelete struct {
-	Song  string `json:"song" db:"song"`
-	Group string `json:"group" db:"music_group"`
+	Song        string `json:"song,omitempty" db:"song" validate:"required"`
+	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
+	Link        string `json:"link,omitempty" db:"link" validate:"required,url"`
+	ReleaseDate string `json:"releaseDate,omitempty" db:"release_date" validate:"required,datetime=02-01-2006"`
 }
 
 type MusicToGet struct {

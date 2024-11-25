@@ -2,7 +2,9 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"library-music/internal/services"
 	"library-music/internal/services/music"
 	"net/http"
@@ -12,6 +14,7 @@ import (
 
 const (
 	ErrInvalidArguments = "invalid arguments"
+	ErrAlreadyExists    = "already exists"
 	ErrRecordNotFound   = "record not found"
 	ErrInternalServer   = "internal server error"
 )
@@ -25,6 +28,7 @@ const (
 // @Param input body services.MusicToAdd true "Music info to add"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
@@ -34,8 +38,18 @@ func (h *Handler) AddMusic(c *gin.Context) {
 		return
 	}
 
+	err := validateParams(input)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	id, err := h.service.Music.Add(input)
 	if err != nil {
+		if errors.Is(err, music.ErrMusicAlreadyExists) {
+			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+			return
+		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -43,6 +57,24 @@ func (h *Handler) AddMusic(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"id": id,
 	})
+}
+
+func validateParams(value interface{}) error {
+	validate := validator.New()
+
+	err := validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
+		_, err := time.Parse("02-01-2006", fl.Field().String())
+		return err == nil
+	})
+
+	if err != nil {
+		return fmt.Errorf(ErrInternalServer)
+	}
+	err = validate.Struct(value)
+	if err != nil {
+		return fmt.Errorf(ErrInvalidArguments)
+	}
+	return nil
 }
 
 // @Summary UpdateMusic
@@ -56,6 +88,7 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
+// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
@@ -71,12 +104,24 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
+	err = validateParams(input)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
+
+		if errors.Is(err, music.ErrMusicAlreadyExists) {
+			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+			return
+		}
+
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -97,34 +142,11 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
+// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/update [patch]
 func (h *Handler) UpdatePartialMusic(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
-		return
-	}
-
-	var input services.MusicToUpdate
-	if err = c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
-		return
-	}
-
-	err = h.service.Music.Update(input, id)
-	if err != nil {
-		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
-			return
-		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
-	})
+	h.UpdateMusic(c)
 }
 
 // @Summary DeleteMusic
@@ -181,6 +203,15 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	group := c.Query("group")
 	link := c.Query("link")
 	text := c.Query("text")
+
+	if link != "" {
+		validate := validator.New()
+		err := validate.Var(link, "url")
+		if err != nil {
+			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+			return
+		}
+	}
 
 	inputDate := c.Query("releaseDate")
 	var date time.Time
