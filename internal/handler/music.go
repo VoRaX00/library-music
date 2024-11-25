@@ -71,17 +71,11 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	//date, err := h.checkedDate(input.ReleaseDate)
-	//if err != nil {
-	//	NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
-	//	return
-	//}
-	//
-	//input.ReleaseDate = date.Format("2006-01-02")
 	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			return
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
@@ -118,17 +112,11 @@ func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 		return
 	}
 
-	date, err := h.checkedDate(input.ReleaseDate)
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	input.ReleaseDate = date.Format("2006-01-02")
 	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			return
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return

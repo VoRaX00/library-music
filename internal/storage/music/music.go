@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"library-music/internal/domain/models"
+	"strings"
+	"time"
 )
 
 var (
-	ErrMusicNotFound = errors.New("music not found")
+	ErrMusicNotFound  = errors.New("music not found")
+	ErrEmptyArguments = errors.New("empty arguments")
 )
 
 type Music struct {
@@ -97,8 +100,12 @@ func (r *Music) Delete(id int) error {
 
 func (r *Music) Update(music models.Music, id int) error {
 	const op = "storage.music.Update"
-	query := "UPDATE music SET song=$1, text_song=$2, release_date=$3, link=$4 WHERE id=$5"
-	res, err := r.db.Exec(query, music.Song, music.Text, music.ReleaseDate, music.Link, id)
+	query, args := generateUpdateQuery(music, id)
+	if args == nil {
+		return fmt.Errorf("%s: %w", op, ErrEmptyArguments)
+	}
+
+	res, err := r.db.Exec(query, args...)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -112,6 +119,45 @@ func (r *Music) Update(music models.Music, id int) error {
 		return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 	}
 	return nil
+}
+
+func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
+	fields := map[string]interface{}{
+		"song":         music.Song,
+		"text_song":    music.Text,
+		"link":         music.Link,
+		"release_date": music.ReleaseDate,
+	}
+
+	query := "UPDATE music SET "
+	var updates []string
+	var args []interface{}
+
+	for name, value := range fields {
+		if !isZero(value) {
+			updates = append(updates, fmt.Sprintf(`"%s" = $%d`, name, len(args)+1))
+			args = append(args, value)
+		}
+	}
+
+	if len(updates) == 0 {
+		return "", nil
+	}
+
+	query += strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id=$%d", len(args)+1)
+	args = append(args, id)
+	return query, args
+}
+
+func isZero(value interface{}) bool {
+	switch value.(type) {
+	case string:
+		return value == ""
+	case time.Time:
+		return value.(time.Time).IsZero()
+	default:
+		return value == nil
+	}
 }
 
 func (r *Music) GetById(id int) (models.Music, error) {
