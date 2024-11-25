@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"library-music/internal/services"
+	musicrepo "library-music/internal/storage/music"
 	"library-music/pkg/mapper"
 	"log/slog"
 	"strings"
@@ -61,7 +62,7 @@ func (s *Music) Delete(id int) error {
 	log.Info("deleting a song")
 	err := s.repo.Delete(id)
 	if err != nil {
-		if errors.Is(err, ErrMusicNotFound) {
+		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
 			return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}

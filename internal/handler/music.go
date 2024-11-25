@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	ErrInvalidArguments   = "invalid arguments"
-	ErrInvalidCredentials = "invalid credentials"
-	ErrInternalServer     = "internal server error"
+	ErrInvalidArguments = "invalid arguments"
+	ErrRecordNotFound   = "record not found"
+	ErrInternalServer   = "internal server error"
 )
 
 // @Summary AddMusic
@@ -81,7 +81,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
@@ -114,9 +114,9 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	err = h.service.Music.Delete(id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			return
 		}
-
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
@@ -168,7 +168,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	musics, err := h.service.Music.GetAll(filters, page)
 	if err != nil {
 		if errors.Is(err, music.ErrInvalidCredentials) {
-			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidCredentials)
+			NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
 		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
@@ -202,7 +202,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 	msc, err := h.service.Music.Get(song, group)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
 
@@ -238,7 +238,7 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 
 	text, err := h.service.Music.GetText(song, group, page)
 	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
