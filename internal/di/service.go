@@ -8,11 +8,11 @@ import (
 )
 
 type Music interface {
-	Add(music services.ToAdd) (int, error)
+	Add(music services.MusicToAdd) (int, error)
 	Delete(id int) error
-	Update(music services.ToUpdate, id int) error
-	GetAll(params services.FilterParams, page int) ([]services.ToGet, error)
-	Get(song, group string) (services.ToGet, error)
+	Update(music services.MusicToUpdate, id int) error
+	GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error)
+	Get(song, group string) (services.MusicToGet, error)
 	GetText(song, group string, page int) (string, error)
 }
 

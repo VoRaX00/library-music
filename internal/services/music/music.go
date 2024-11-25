@@ -29,7 +29,7 @@ func New(log *slog.Logger, repo Repo) *Music {
 	}
 }
 
-func (s *Music) Add(music services.ToAdd) (int, error) {
+func (s *Music) Add(music services.MusicToAdd) (int, error) {
 	const op = "music.Add"
 	log := s.log.With(
 		slog.String("op", op),
@@ -76,7 +76,7 @@ func (s *Music) Delete(id int) error {
 	return nil
 }
 
-func (s *Music) Update(music services.ToUpdate, id int) error {
+func (s *Music) Update(music services.MusicToUpdate, id int) error {
 	const op = "music.Update"
 	log := s.log.With(
 		slog.String("op", op),
@@ -103,7 +103,7 @@ func (s *Music) Update(music services.ToUpdate, id int) error {
 	return nil
 }
 
-func (s *Music) GetAll(params services.FilterParams, page int) ([]services.ToGet, error) {
+func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error) {
 	const op = "music.GetAll"
 	log := s.log.With(
 		slog.String("op", op),
@@ -116,7 +116,7 @@ func (s *Music) GetAll(params services.FilterParams, page int) ([]services.ToGet
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	arr := make([]services.ToGet, len(res))
+	arr := make([]services.MusicToGet, len(res))
 	for i, v := range res {
 		arr[i] = s.mapper.MusicForGet(v)
 	}
@@ -124,7 +124,7 @@ func (s *Music) GetAll(params services.FilterParams, page int) ([]services.ToGet
 	return arr, nil
 }
 
-func (s *Music) Get(song, group string) (services.ToGet, error) {
+func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	const op = "music.Get"
 	log := s.log.With(
 		slog.String("op", op),
@@ -135,9 +135,9 @@ func (s *Music) Get(song, group string) (services.ToGet, error) {
 	if err != nil {
 		if errors.Is(err, ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return services.ToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return services.MusicToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
-		return services.ToGet{}, fmt.Errorf("%s: %w", op, err)
+		return services.MusicToGet{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully fetched a song")
 	return s.mapper.MusicForGet(music), nil

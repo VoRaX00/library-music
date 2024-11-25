@@ -9,7 +9,7 @@ import (
 type MusicMapper struct {
 }
 
-func (m *MusicMapper) FilterToMusic(object services.FilterParams) models.Music {
+func (m *MusicMapper) FilterToMusic(object services.MusicFilterParams) models.Music {
 	return models.Music{
 		Song:        object.Song,
 		Group:       object.Group,
@@ -19,8 +19,8 @@ func (m *MusicMapper) FilterToMusic(object services.FilterParams) models.Music {
 	}
 }
 
-func (m *MusicMapper) MusicForGet(object models.Music) services.ToGet {
-	return services.ToGet{
+func (m *MusicMapper) MusicForGet(object models.Music) services.MusicToGet {
+	return services.MusicToGet{
 		Song:        object.Song,
 		Group:       object.Group,
 		Link:        object.Link,
@@ -28,7 +28,7 @@ func (m *MusicMapper) MusicForGet(object models.Music) services.ToGet {
 	}
 }
 
-func (m *MusicMapper) UpdateToMusic(object services.ToUpdate) (models.Music, error) {
+func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return models.Music{}, err
@@ -42,7 +42,7 @@ func (m *MusicMapper) UpdateToMusic(object services.ToUpdate) (models.Music, err
 	}, nil
 }
 
-func (m *MusicMapper) AddToMusic(object services.ToAdd) (models.Music, error) {
+func (m *MusicMapper) AddToMusic(object services.MusicToAdd) (models.Music, error) {
 	date, err := time.Parse(object.ReleaseDate, "02-01-2006")
 	if err != nil {
 		return models.Music{}, err

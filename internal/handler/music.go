@@ -30,7 +30,7 @@ const (
 // @Failure 500 {object} map[string]string
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
-	var input services.ToAdd
+	var input services.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -72,7 +72,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	var input services.ToUpdate
+	var input services.MusicToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -85,7 +85,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 	}
 
 	input.ReleaseDate = date.Format("2006-01-02")
-	song, err := h.service.Music.Update(input, id)
+	err = h.service.Music.Update(input, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrInvalidCredentials)
@@ -96,7 +96,6 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
-		"music":  song,
 	})
 }
 
