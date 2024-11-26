@@ -29,6 +29,7 @@ definitions:
       link:
         type: string
       releaseDate:
+        example: DD-MM-YYYY
         type: string
       song:
         type: string
@@ -45,6 +46,7 @@ definitions:
       link:
         type: string
       releaseDate:
+        example: DD-MM-YYYY
         type: string
       song:
         type: string
@@ -56,6 +58,7 @@ definitions:
       link:
         type: string
       releaseDate:
+        example: DD-MM-YYYY
         type: string
       song:
         type: string
@@ -180,6 +183,10 @@ paths:
       - description: Text song
         in: query
         name: text
+        type: string
+      - description: Release date
+        in: query
+        name: releaseDate
         type: string
       - description: Page number
         in: query

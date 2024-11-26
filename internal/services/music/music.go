@@ -171,15 +171,10 @@ func (s *Music) GetText(song, group string, page int) (string, error) {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	if page < 1 {
-		log.Error("page must be greater than zero")
-		return "", fmt.Errorf("%s: %w", op, errors.New("page must be greater than zero"))
-	}
-
 	verses := strings.Split(text, "\n\n")
-	if len(verses) <= page {
+	if len(verses) < page {
 		log.Error("page is out of range")
-		return "", fmt.Errorf("%s: %w", op, errors.New("page is out of range"))
+		return "", fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 	}
 	log.Info("successfully fetched a song")
 	return verses[page-1], nil

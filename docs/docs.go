@@ -183,6 +183,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Release date",
+                        "name": "releaseDate",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page number",
                         "name": "page",
@@ -568,7 +574,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "releaseDate": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "DD-MM-YYYY"
                 },
                 "song": {
                     "type": "string"
@@ -585,7 +592,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "releaseDate": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "DD-MM-YYYY"
                 },
                 "song": {
                     "type": "string"
@@ -607,7 +615,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "releaseDate": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "DD-MM-YYYY"
                 },
                 "song": {
                     "type": "string"

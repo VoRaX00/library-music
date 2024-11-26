@@ -218,7 +218,7 @@ func partialToDefault(update services.MusicToPartialUpdate) services.MusicToUpda
 // @Router /api/delete [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
+	if err != nil || id < 0 {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
@@ -248,6 +248,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Param group query string false "Music group"
 // @Param link query string false "Link song"
 // @Param text query string false "Text song"
+// @Param releaseDate query string false "Release date" example:"DD-MM-YYYY"
 // @Param page query int true "Page number"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
@@ -279,9 +280,9 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		}
 	}
 
-	filters := services.NewMusicFilterParams(song, group, link, text, date)
+	filters := services.NewMusicFilterParams(song, group, text, link, date)
 	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
+	if err != nil || page < 0 {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
@@ -354,13 +355,17 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
 	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
+	if err != nil || page < 0 {
 		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	text, err := h.service.Music.GetText(song, group, page)
 	if err != nil {
+		if errors.Is(err, music.ErrMusicNotFound) {
+			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			return
+		}
 		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}

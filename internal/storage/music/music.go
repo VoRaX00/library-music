@@ -205,13 +205,8 @@ func (r *Music) checkUpdateOnDuplicate(song string, id int) (bool, error) {
     	SELECT 1
 		FROM music m
 		JOIN music_groups mg ON m.id = mg.music_id
-		JOIN groups g ON mg.group_id = g.id
-		WHERE m.song = $1 AND m.id = (
-		    SELECT g.id
-		    FROM groups g
-		    JOIN music_groups mg ON g.id = mg.group_id
-		    WHERE mg.music_id = $2
-		) AND m.id <> $2
+		JOIN music_groups mg2 ON mg.group_id = mg2.group_id
+		WHERE m.song = $1 AND mg2.music_id = $2 AND m.id <> $2
 	)`
 
 	var exists bool
@@ -229,7 +224,7 @@ func (r *Music) GetById(id int) (models.Music, error) {
 	FROM music m
 	JOIN music_groups mg ON mg.music_id = m.id
 	JOIN groups g ON g.id = mg.group_id
-	WHERE m.id=?`
+	WHERE m.id=$1`
 
 	err := r.db.Get(&music, query, id)
 	if err != nil {
@@ -341,7 +336,7 @@ func (r *Music) GetText(song, group string) (string, error) {
 	FROM music m
 	JOIN music_groups mg on m.id = mg.music_id
 	JOIN groups g ON mg.group_id = g.id
-	WHERE m.song = ? AND g.name = ?`
+	WHERE m.song = $1 AND g.name =$2`
 	err := r.db.Get(&text, query, song, group)
 
 	if err != nil {
