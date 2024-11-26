@@ -70,6 +70,7 @@ func validateParams(value interface{}) error {
 	if err != nil {
 		return fmt.Errorf(ErrInternalServer)
 	}
+
 	err = validate.Struct(value)
 	if err != nil {
 		return fmt.Errorf(ErrInvalidArguments)
@@ -93,8 +94,8 @@ func validateParams(value interface{}) error {
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+	if err != nil || id < 0 {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid id")
 		return
 	}
 
@@ -110,25 +111,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Music.Update(input, id)
-	if err != nil {
-		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
-			return
-		}
-
-		if errors.Is(err, music.ErrMusicAlreadyExists) {
-			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
-			return
-		}
-
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
-	})
+	h.defaultUpdate(c, input, id)
 }
 
 // @Summary UpdatePartialMusic
@@ -147,8 +130,8 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Router /api/update [patch]
 func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+	if err != nil || id < 0 {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid id")
 		return
 	}
 
@@ -164,9 +147,12 @@ func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 		return
 	}
 
-	upd := partialToDefault(input)
+	upd := input.ParsePartial()
+	h.defaultUpdate(c, upd, id)
+}
 
-	err = h.service.Music.Update(upd, id)
+func (h *Handler) defaultUpdate(c *gin.Context, upd services.MusicToUpdate, id int) {
+	err := h.service.Music.Update(upd, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
@@ -185,23 +171,6 @@ func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
 	})
-}
-
-func partialToDefault(update services.MusicToPartialUpdate) services.MusicToUpdate {
-	upd := services.MusicToUpdate{}
-	if update.Song != nil {
-		upd.Song = *update.Song
-	}
-	if update.Text != nil {
-		upd.Text = *update.Text
-	}
-	if update.Link != nil {
-		upd.Link = *update.Link
-	}
-	if update.ReleaseDate != nil {
-		upd.ReleaseDate = *update.ReleaseDate
-	}
-	return upd
 }
 
 // @Summary DeleteMusic
