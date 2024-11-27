@@ -59,25 +59,6 @@ func (h *Handler) AddMusic(c *gin.Context) {
 	})
 }
 
-func validateParams(value interface{}) error {
-	validate := validator.New()
-
-	err := validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
-		_, err := time.Parse("02.01.2006", fl.Field().String())
-		return err == nil
-	})
-
-	if err != nil {
-		return fmt.Errorf(ErrInternalServer)
-	}
-
-	err = validate.Struct(value)
-	if err != nil {
-		return fmt.Errorf(ErrInvalidArguments)
-	}
-	return nil
-}
-
 // @Summary UpdateMusic
 // @Tags music
 // @Description update music
@@ -242,7 +223,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	var date time.Time
 	if inputDate != "" {
 		var err error
-		date, err = h.checkedDate(inputDate)
+		date, err = time.Parse("02.01.2006", inputDate)
 		if err != nil {
 			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 			return
@@ -269,11 +250,6 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"musics": musics,
 	})
-}
-
-func (h *Handler) checkedDate(date string) (time.Time, error) {
-	val, err := time.Parse("02-01-2006", date)
-	return val, err
 }
 
 // @Summary GetMusic
@@ -342,4 +318,23 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"text": text,
 	})
+}
+
+func validateParams(value interface{}) error {
+	validate := validator.New()
+
+	err := validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
+		_, err := time.Parse("02.01.2006", fl.Field().String())
+		return err == nil
+	})
+
+	if err != nil {
+		return fmt.Errorf(ErrInternalServer)
+	}
+
+	err = validate.Struct(value)
+	if err != nil {
+		return fmt.Errorf(ErrInvalidArguments)
+	}
+	return nil
 }
