@@ -10,21 +10,21 @@ type MusicToAdd struct {
 	Song        string `json:"song" db:"song" validate:"required"`
 	Group       string `json:"group" db:"group" validate:"required"`
 	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	Link        string `json:"link" db:"link" validate:"required,url"`
+	Link        string `json:"link" db:"link" validate:"required,url" example:"https://example.com"`
 	ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD.MM.YYYY"`
 }
 
 type MusicToUpdate struct {
 	Song        string `json:"song,required" db:"song" validate:"required"`
 	Text        string `json:"text,required" db:"text_song" validate:"required"`
-	Link        string `json:"link,required" db:"link" validate:"required,url"`
+	Link        string `json:"link,required" db:"link" validate:"required,url" example:"https://example.com"`
 	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 
 type MusicToPartialUpdate struct {
 	Song        *string `json:"song,omitempty" db:"song" validate:"omitempty"`
 	Text        *string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url"`
+	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url" example:"https://example.com"`
 	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 
@@ -46,15 +46,15 @@ type MusicToGet struct {
 	Id          int          `json:"id" db:"id"`
 	Song        string       `json:"song" db:"song"`
 	Group       models.Group `json:"group" db:"group"`
-	Link        string       `json:"link" db:"link"`
-	ReleaseDate string       `json:"releaseDate" db:"release_date"`
+	Link        string       `json:"link" db:"link" example:"https://example.com"`
+	ReleaseDate string       `json:"releaseDate" db:"release_date" example:"DD.MM.YYYY"`
 }
 
 type MusicFilterParams struct {
 	Song        string    `json:"song"`
 	Group       string    `json:"group"`
 	Text        string    `json:"text"`
-	Link        string    `json:"link"`
+	Link        string    `json:"link" example:"https://example.com"`
 	ReleaseDate time.Time `json:"releaseDate" example:"DD.MM.YYYY"`
 }
 

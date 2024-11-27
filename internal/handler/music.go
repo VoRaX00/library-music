@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"library-music/internal/handler/responses"
 	"library-music/internal/services"
 	"library-music/internal/services/music"
 	"net/http"
@@ -26,37 +27,39 @@ const (
 // @Accept json
 // @Produce json
 // @Param input body services.MusicToAdd true "Music info to add"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 409 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessID
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 409 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/add [post]
 func (h *Handler) AddMusic(c *gin.Context) {
 	var input services.MusicToAdd
 	if err := c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	err := validateParams(input)
 	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		responses.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	id, err := h.service.Music.Add(input)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicAlreadyExists) {
-			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+			responses.NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
 			return
 		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id": id,
-	})
+	c.JSON(http.StatusOK,
+		responses.SuccessID{
+			ID: id,
+		},
+	)
 }
 
 // @Summary UpdateMusic
@@ -67,28 +70,28 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Produce json
 // @Param id query int true "Id song"
 // @Param input body services.MusicToUpdate true "Music info to update"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 409 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessStatus
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 404 {object} responses.ErrorResponse
+// @Failure 409 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/update [put]
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil || id < 0 {
-		NewErrorResponse(c, http.StatusBadRequest, "invalid id")
+		responses.NewErrorResponse(c, http.StatusBadRequest, "invalid id")
 		return
 	}
 
 	var input services.MusicToUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	err = validateParams(input)
 	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		responses.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -103,28 +106,28 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Produce json
 // @Param id query int true "Id song"
 // @Param input body services.MusicToPartialUpdate true "Music info to update"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 409 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessStatus
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 404 {object} responses.ErrorResponse
+// @Failure 409 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/update [patch]
 func (h *Handler) UpdatePartialMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil || id < 0 {
-		NewErrorResponse(c, http.StatusBadRequest, "invalid id")
+		responses.NewErrorResponse(c, http.StatusBadRequest, "invalid id")
 		return
 	}
 
 	var input services.MusicToPartialUpdate
 	if err = c.ShouldBindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	err = validateParams(input)
 	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		responses.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -136,21 +139,21 @@ func (h *Handler) defaultUpdate(c *gin.Context, upd services.MusicToUpdate, id i
 	err := h.service.Music.Update(upd, id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
 
 		if errors.Is(err, music.ErrMusicAlreadyExists) {
-			NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+			responses.NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
 			return
 		}
 
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
+	c.JSON(http.StatusOK, responses.SuccessStatus{
+		Status: "success",
 	})
 }
 
@@ -161,30 +164,30 @@ func (h *Handler) defaultUpdate(c *gin.Context, upd services.MusicToUpdate, id i
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessStatus
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 404 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/delete [delete]
 func (h *Handler) DeleteMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil || id < 0 {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	err = h.service.Music.Delete(id)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
+	c.JSON(http.StatusOK, responses.SuccessStatus{
+		Status: "success",
 	})
 }
 
@@ -198,11 +201,11 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Param group query string false "Music group"
 // @Param link query string false "Link song"
 // @Param text query string false "Text song"
-// @Param releaseDate query string false "Release date" example:"DD-MM-YYYY"
+// @Param releaseDate query string false "Release date" example:"DD.MM.YYYY"
 // @Param page query int true "Page number"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessMusics
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/getAll [get]
 func (h *Handler) GetMusicList(c *gin.Context) {
 	song := c.Query("song")
@@ -214,7 +217,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		validate := validator.New()
 		err := validate.Var(link, "url")
 		if err != nil {
-			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+			responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 			return
 		}
 	}
@@ -225,7 +228,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 		var err error
 		date, err = time.Parse("02.01.2006", inputDate)
 		if err != nil {
-			NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+			responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 			return
 		}
 	}
@@ -233,22 +236,22 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	filters := services.NewMusicFilterParams(song, group, text, link, date)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil || page < 0 {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	musics, err := h.service.Music.GetAll(filters, page)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
 			return
 		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"musics": musics,
+	c.JSON(http.StatusOK, responses.SuccessMusics{
+		Music: musics,
 	})
 }
 
@@ -261,25 +264,25 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
 // @Success 200 {object} models.Music
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 404 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
-	msc, err := h.service.Music.Get(song, group)
+	res, err := h.service.Music.Get(song, group)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"music": msc,
+		"music": res,
 	})
 }
 
@@ -292,31 +295,31 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
 // @Param page query int true "Page number"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} responses.SuccessText
+// @Failure 400 {object} responses.ErrorResponse
+// @Failure 500 {object} responses.ErrorResponse
 // @Router /api/getText [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil || page < 0 {
-		NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
 	text, err := h.service.Music.GetText(song, group, page)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
 			return
 		}
-		NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"text": text,
+	c.JSON(http.StatusOK, responses.SuccessText{
+		Text: text,
 	})
 }
 

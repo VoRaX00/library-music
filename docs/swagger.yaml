@@ -14,11 +14,40 @@ definitions:
       id:
         type: integer
       link:
+        example: https://example.com
         type: string
       releaseDate:
+        example: DD.MM.YYYY
         type: string
       song:
         type: string
+      text:
+        type: string
+    type: object
+  responses.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  responses.SuccessID:
+    properties:
+      id:
+        type: integer
+    type: object
+  responses.SuccessMusics:
+    properties:
+      songs:
+        items:
+          $ref: '#/definitions/services.MusicToGet'
+        type: array
+    type: object
+  responses.SuccessStatus:
+    properties:
+      status:
+        type: string
+    type: object
+  responses.SuccessText:
+    properties:
       text:
         type: string
     type: object
@@ -27,9 +56,10 @@ definitions:
       group:
         type: string
       link:
+        example: https://example.com
         type: string
       releaseDate:
-        example: DD-MM-YYYY
+        example: DD.MM.YYYY
         type: string
       song:
         type: string
@@ -41,12 +71,28 @@ definitions:
     - releaseDate
     - song
     type: object
+  services.MusicToGet:
+    properties:
+      group:
+        $ref: '#/definitions/models.Group'
+      id:
+        type: integer
+      link:
+        example: https://example.com
+        type: string
+      releaseDate:
+        example: DD.MM.YYYY
+        type: string
+      song:
+        type: string
+    type: object
   services.MusicToPartialUpdate:
     properties:
       link:
+        example: https://example.com
         type: string
       releaseDate:
-        example: DD-MM-YYYY
+        example: DD.MM.YYYY
         type: string
       song:
         type: string
@@ -56,9 +102,10 @@ definitions:
   services.MusicToUpdate:
     properties:
       link:
+        example: https://example.com
         type: string
       releaseDate:
-        example: DD-MM-YYYY
+        example: DD.MM.YYYY
         type: string
       song:
         type: string
@@ -95,27 +142,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessID'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: AddMusic
       tags:
       - music
@@ -137,27 +176,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessStatus'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: DeleteMusic
       tags:
       - music
@@ -199,21 +230,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessMusics'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: GetMusicList
       tags:
       - music
@@ -245,21 +270,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessText'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: GetTextMusic
       tags:
       - music
@@ -290,21 +309,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: GetMusic
       tags:
       - music
@@ -332,33 +345,23 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessStatus'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: UpdatePartialMusic
       tags:
       - music
@@ -385,33 +388,23 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.SuccessStatus'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/responses.ErrorResponse'
       summary: UpdateMusic
       tags:
       - music
