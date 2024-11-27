@@ -63,7 +63,7 @@ func validateParams(value interface{}) error {
 	validate := validator.New()
 
 	err := validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
-		_, err := time.Parse("02-01-2006", fl.Field().String())
+		_, err := time.Parse("02.01.2006", fl.Field().String())
 		return err == nil
 	})
 

@@ -11,21 +11,21 @@ type MusicToAdd struct {
 	Group       string `json:"group" db:"group" validate:"required"`
 	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
 	Link        string `json:"link" db:"link" validate:"required,url"`
-	ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD-MM-YYYY"`
+	ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD.MM.YYYY"`
 }
 
 type MusicToUpdate struct {
 	Song        string `json:"song,required" db:"song" validate:"required"`
 	Text        string `json:"text,required" db:"text_song" validate:"required"`
 	Link        string `json:"link,required" db:"link" validate:"required,url"`
-	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime" example:"DD-MM-YYYY"`
+	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 
 type MusicToPartialUpdate struct {
 	Song        *string `json:"song,omitempty" db:"song" validate:"omitempty"`
 	Text        *string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
 	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url"`
-	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime" example:"DD-MM-YYYY"`
+	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 
 func (m *MusicToPartialUpdate) ParsePartial() MusicToUpdate {
@@ -55,7 +55,7 @@ type MusicFilterParams struct {
 	Group       string    `json:"group"`
 	Text        string    `json:"text"`
 	Link        string    `json:"link"`
-	ReleaseDate time.Time `json:"releaseDate" example:"DD-MM-YYYY"`
+	ReleaseDate time.Time `json:"releaseDate" example:"DD.MM.YYYY"`
 }
 
 func NewMusicFilterParams(song, group, text, link string, releaseDate time.Time) MusicFilterParams {
