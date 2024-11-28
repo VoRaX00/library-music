@@ -170,7 +170,8 @@ func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
 
 	for i := 0; i < v.NumField(); i++ {
 		if !v.Field(i).IsZero() {
-			updates = append(updates, fmt.Sprintf("%s = $%d", t.Field(i).Name, len(args)+1))
+			updates = append(updates, fmt.Sprintf("%s = $%d", t.Field(i).Tag.Get("db"), len(args)+1))
+			args = append(args, v.Field(i).Interface())
 		}
 	}
 
