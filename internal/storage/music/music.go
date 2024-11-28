@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"library-music/internal/domain/models"
+	"reflect"
 	"strings"
-	"time"
 )
 
 var (
@@ -162,21 +162,15 @@ func (r *Music) Update(music models.Music, id int) error {
 }
 
 func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
-	fields := map[string]interface{}{
-		"song":         music.Song,
-		"text_song":    music.Text,
-		"link":         music.Link,
-		"release_date": music.ReleaseDate,
-	}
-
 	query := "UPDATE music SET "
 	var updates []string
 	var args []interface{}
+	v := reflect.ValueOf(music)
+	t := reflect.TypeOf(music)
 
-	for name, value := range fields {
-		if !isZero(value) {
-			updates = append(updates, fmt.Sprintf(`"%s" = $%d`, name, len(args)+1))
-			args = append(args, value)
+	for i := 0; i < v.NumField(); i++ {
+		if !v.Field(i).IsZero() {
+			updates = append(updates, fmt.Sprintf("%s = $%d", t.Field(i).Name, len(args)+1))
 		}
 	}
 
@@ -187,17 +181,6 @@ func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
 	query += strings.Join(updates, ", ") + fmt.Sprintf(" WHERE id=$%d", len(args)+1)
 	args = append(args, id)
 	return query, args
-}
-
-func isZero(value interface{}) bool {
-	switch value.(type) {
-	case string:
-		return value == ""
-	case time.Time:
-		return value.(time.Time).IsZero()
-	default:
-		return value == nil
-	}
 }
 
 func (r *Music) checkUpdateOnDuplicate(song string, id int) (bool, error) {
