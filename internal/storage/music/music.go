@@ -129,13 +129,38 @@ func (r *Music) Delete(id int) error {
 
 func (r *Music) Update(music models.Music, id int) error {
 	const op = "storage.music.Update"
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	if music.Group.Name != "" {
+		err = r.updateWithGroup(tx, id, music.Group.Name)
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
 	query, args := generateUpdateQuery(music, id)
 	if args == nil {
-		return fmt.Errorf("%s: %w", op, ErrEmptyArguments)
+		if music.Group.Name == "" {
+			return fmt.Errorf("%s: %w", op, ErrEmptyArguments)
+		}
+
+		if err = tx.Commit(); err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+		return nil
 	}
 
 	if music.Song != "" {
-		res, err := r.checkUpdateOnDuplicate(music.Song, id)
+		res, err := r.checkUpdateOnDuplicate(tx, music.Song, id)
 		if err != nil {
 			return fmt.Errorf("%s: %w", op, err)
 		}
@@ -145,7 +170,7 @@ func (r *Music) Update(music models.Music, id int) error {
 		}
 	}
 
-	res, err := r.db.Exec(query, args...)
+	res, err := tx.Exec(query, args...)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -158,6 +183,11 @@ func (r *Music) Update(music models.Music, id int) error {
 	if row == 0 {
 		return fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
 	return nil
 }
 
@@ -169,7 +199,7 @@ func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
 	t := reflect.TypeOf(music)
 
 	for i := 0; i < v.NumField(); i++ {
-		if !v.Field(i).IsZero() {
+		if !v.Field(i).IsZero() && t.Field(i).Name != "Group" {
 			updates = append(updates, fmt.Sprintf("%s = $%d", t.Field(i).Tag.Get("db"), len(args)+1))
 			args = append(args, v.Field(i).Interface())
 		}
@@ -184,7 +214,7 @@ func generateUpdateQuery(music models.Music, id int) (string, []interface{}) {
 	return query, args
 }
 
-func (r *Music) checkUpdateOnDuplicate(song string, id int) (bool, error) {
+func (r *Music) checkUpdateOnDuplicate(tx *sqlx.Tx, song string, id int) (bool, error) {
 	query := `SELECT EXISTS (
     	SELECT 1
 		FROM music m
@@ -194,7 +224,7 @@ func (r *Music) checkUpdateOnDuplicate(song string, id int) (bool, error) {
 	)`
 
 	var exists bool
-	err := r.db.Get(&exists, query, song, id)
+	err := tx.Get(&exists, query, song, id)
 	if err != nil {
 		return false, err
 	}

@@ -16,6 +16,7 @@ type MusicToAdd struct {
 
 type MusicToUpdate struct {
 	Song        string `json:"song,required" db:"song" validate:"required"`
+	Group       string `json:"group,required" db:"group" validate:"required"`
 	Text        string `json:"text,required" db:"text_song" validate:"required"`
 	Link        string `json:"link,required" db:"link" validate:"required,url" example:"https://example.com"`
 	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
@@ -23,6 +24,7 @@ type MusicToUpdate struct {
 
 type MusicToPartialUpdate struct {
 	Song        *string `json:"song,omitempty" db:"song" validate:"omitempty"`
+	Group       *string `json:"group,omitempty" db:"group" validate:"omitempty"`
 	Text        *string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
 	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url" example:"https://example.com"`
 	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`

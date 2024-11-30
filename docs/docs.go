@@ -575,6 +575,9 @@ const docTemplate = `{
         "services.MusicToPartialUpdate": {
             "type": "object",
             "properties": {
+                "group": {
+                    "type": "string"
+                },
                 "link": {
                     "type": "string",
                     "example": "https://example.com"
@@ -594,11 +597,15 @@ const docTemplate = `{
         "services.MusicToUpdate": {
             "type": "object",
             "required": [
+                "group",
                 "link",
                 "song",
                 "text"
             ],
             "properties": {
+                "group": {
+                    "type": "string"
+                },
                 "link": {
                     "type": "string",
                     "example": "https://example.com"

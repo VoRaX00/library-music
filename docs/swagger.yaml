@@ -88,6 +88,8 @@ definitions:
     type: object
   services.MusicToPartialUpdate:
     properties:
+      group:
+        type: string
       link:
         example: https://example.com
         type: string
@@ -101,6 +103,8 @@ definitions:
     type: object
   services.MusicToUpdate:
     properties:
+      group:
+        type: string
       link:
         example: https://example.com
         type: string
@@ -112,6 +116,7 @@ definitions:
       text:
         type: string
     required:
+    - group
     - link
     - song
     - text
