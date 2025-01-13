@@ -7,11 +7,11 @@ import (
 )
 
 type MusicToAdd struct {
-	Song        string `json:"song" db:"song" validate:"required"`
-	Group       string `json:"group" db:"group" validate:"required"`
-	Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	Link        string `json:"link" db:"link" validate:"required,url" example:"https://example.com"`
-	ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD.MM.YYYY"`
+	Song  string `json:"song" validate:"required"`
+	Group string `json:"group" validate:"required"`
+	//Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
+	//Link        string `json:"link" db:"link" validate:"required,url" example:"https://example.com"`
+	//ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD.MM.YYYY"`
 }
 
 type MusicToUpdate struct {
@@ -44,12 +44,18 @@ func (m *MusicToPartialUpdate) ParsePartial() MusicToUpdate {
 	return update
 }
 
+type MusicInfo struct {
+	ReleaseDate string `json:"releaseDate" example:"16.07.2006"`
+	Text        string `json:"text"`
+	Link        string `json:"link" example:"https://www.youtube.com/watch?v=Xsp3_a-PMTw"`
+}
+
 type MusicToGet struct {
-	Id          int          `json:"id" db:"id"`
-	Song        string       `json:"song" db:"song"`
-	Group       models.Group `json:"group" db:"group"`
-	Link        string       `json:"link" db:"link" example:"https://example.com"`
-	ReleaseDate string       `json:"releaseDate" db:"release_date" example:"DD.MM.YYYY"`
+	Id          int          `json:"id"`
+	Song        string       `json:"song"`
+	Group       models.Group `json:"group"`
+	Link        string       `json:"link" example:"https://www.youtube.com/watch?v=Xsp3_a-PMTw"`
+	ReleaseDate string       `json:"releaseDate" example:"16.07.2006"`
 }
 
 type MusicFilterParams struct {

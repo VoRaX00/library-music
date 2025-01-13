@@ -12,7 +12,7 @@ type Music interface {
 	Delete(id int) error
 	Update(music services.MusicToUpdate, id int) error
 	GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error)
-	Get(song, group string) (services.MusicToGet, error)
+	Get(song, group string) (services.MusicInfo, error)
 	GetText(song, group string, page int) (string, error)
 }
 

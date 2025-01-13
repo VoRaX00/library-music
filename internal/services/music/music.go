@@ -133,7 +133,7 @@ func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.
 	return arr, nil
 }
 
-func (s *Music) Get(song, group string) (services.MusicToGet, error) {
+func (s *Music) Get(song, group string) (services.MusicInfo, error) {
 	const op = "music.Get"
 	log := s.log.With(
 		slog.String("op", op),
@@ -144,13 +144,13 @@ func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	if err != nil {
 		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return services.MusicToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return services.MusicInfo{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
 		log.Error("failed to get a song", err.Error())
-		return services.MusicToGet{}, fmt.Errorf("%s: %w", op, err)
+		return services.MusicInfo{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully fetched a song")
-	return s.mapper.MusicForGet(music), nil
+	return s.mapper.MusicForInfo(music), nil
 }
 
 func (s *Music) GetText(song, group string, page int) (string, error) {

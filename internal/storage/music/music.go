@@ -234,7 +234,7 @@ func (r *Music) checkUpdateOnDuplicate(tx *sqlx.Tx, song string, id int) (bool, 
 func (r *Music) GetById(id int) (models.Music, error) {
 	const op = "storage.music.GetById"
 	var music models.Music
-	query := `SELECT m.*, g.name
+	query := `SELECT m.id, m.song, m.text_song, m.link, m.release_date, g.name
 	FROM music m
 	JOIN music_groups mg ON mg.music_id = m.id
 	JOIN groups g ON g.id = mg.group_id
@@ -268,7 +268,7 @@ func (r *Music) GetAll(params models.Music, page int) ([]models.Music, error) {
 }
 
 func generateQuery(params models.Music, page int) (string, []interface{}) {
-	query := `SELECT m.*, 
+	query := `SELECT m.id, m.song, m.text_song, m.link, m.release_date, 
        g.id AS "group.id",
        g.name AS "group.name"
        FROM music m
@@ -325,7 +325,7 @@ func (r *Music) Get(song, group string) (models.Music, error) {
 	const op = "storage.music.Get"
 
 	var foundMusic models.Music
-	query := `SELECT m.*, g.id AS "group.id",
+	query := `SELECT m.id, m.song, m.text_song, m.link, m.release_date, g.id AS "group.id",
         g.name AS "group.name"
     FROM music m 
     JOIN music_groups mg ON m.id = mg.music_id 

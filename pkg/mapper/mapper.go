@@ -44,15 +44,16 @@ func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music
 }
 
 func (m *MusicMapper) AddToMusic(object services.MusicToAdd) (models.Music, error) {
-	date, err := time.Parse("02.01.2006", object.ReleaseDate)
-	if err != nil {
-		return models.Music{}, err
-	}
 	return models.Music{
-		Song:        object.Song,
-		Group:       models.Group{Name: object.Group},
-		Text:        object.Text,
-		Link:        object.Link,
-		ReleaseDate: date,
+		Song:  object.Song,
+		Group: models.Group{Name: object.Group},
 	}, nil
+}
+
+func (m *MusicMapper) MusicForInfo(object models.Music) services.MusicInfo {
+	return services.MusicInfo{
+		ReleaseDate: object.ReleaseDate.Format("02.01.2006"),
+		Link:        object.Link,
+		Text:        object.Text,
+	}
 }

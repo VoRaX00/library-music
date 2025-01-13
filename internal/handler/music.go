@@ -18,6 +18,7 @@ const (
 	ErrAlreadyExists    = "already exists"
 	ErrRecordNotFound   = "record not found"
 	ErrInternalServer   = "internal server error"
+	ErrBadRequest       = "Bad request"
 )
 
 // @Summary AddMusic
@@ -41,7 +42,7 @@ func (h *Handler) AddMusic(c *gin.Context) {
 
 	err := validateParams(input)
 	if err != nil {
-		responses.NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
@@ -261,29 +262,26 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @ID get-music
 // @Accept json
 // @Produce json
-// @Param song query string true "Song name"
 // @Param group query string true "Music group"
+// @Param song query string true "Song name"
 // @Success 200 {object} models.Music
 // @Failure 400 {object} responses.ErrorResponse
-// @Failure 404 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/info [get]
+// @Router /info [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
 	res, err := h.service.Music.Get(song, group)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
-			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
+			responses.NewErrorResponse(c, http.StatusBadRequest, ErrBadRequest)
 			return
 		}
 		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"music": res,
-	})
+	c.JSON(http.StatusOK, res)
 }
 
 // @Summary GetTextMusic
