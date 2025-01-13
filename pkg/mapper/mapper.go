@@ -42,18 +42,3 @@ func (m *MusicMapper) UpdateToMusic(object services.MusicToUpdate) (models.Music
 		ReleaseDate: date,
 	}, nil
 }
-
-func (m *MusicMapper) AddToMusic(object services.MusicToAdd) (models.Music, error) {
-	return models.Music{
-		Song:  object.Song,
-		Group: models.Group{Name: object.Group},
-	}, nil
-}
-
-func (m *MusicMapper) MusicForInfo(object models.Music) services.MusicInfo {
-	return services.MusicInfo{
-		ReleaseDate: object.ReleaseDate.Format("02.01.2006"),
-		Link:        object.Link,
-		Text:        object.Text,
-	}
-}

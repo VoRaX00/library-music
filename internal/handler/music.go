@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"library-music/internal/domain/models"
 	"library-music/internal/handler/responses"
 	"library-music/internal/services"
 	"library-music/internal/services/music"
@@ -27,36 +28,53 @@ const (
 // @ID create-music
 // @Accept json
 // @Produce json
-// @Param input body services.MusicToAdd true "Music info to add"
+// @Param input body services.MusicToAdd true "Music externalApi to add"
 // @Success 200 {object} responses.SuccessID
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 409 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
 // @Router /api/add [post]
-func (h *Handler) AddMusic(c *gin.Context) {
+func (h *Handler) AddMusic(ctx *gin.Context) {
 	var input services.MusicToAdd
-	if err := c.ShouldBindJSON(&input); err != nil {
-		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		responses.NewErrorResponse(ctx, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	err := validateParams(input)
+	songDetails, err := h.service.ExternalApi.Info(input.Song, input.Group)
 	if err != nil {
-		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		responses.NewErrorResponse(ctx, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	id, err := h.service.Music.Add(input)
-	if err != nil {
-		if errors.Is(err, music.ErrMusicAlreadyExists) {
-			responses.NewErrorResponse(c, http.StatusConflict, ErrAlreadyExists)
+	msc := models.Music{
+		Song: input.Song,
+		Group: models.Group{
+			Name: input.Group,
+		},
+		Text: songDetails.Text,
+		Link: songDetails.Link,
+	}
+
+	if songDetails.ReleaseDate != "" {
+		msc.ReleaseDate, err = time.Parse("2006-01-02", songDetails.ReleaseDate)
+		if err != nil {
+			responses.NewErrorResponse(ctx, http.StatusInternalServerError, ErrInternalServer)
 			return
 		}
-		responses.NewErrorResponse(c, http.StatusInternalServerError, ErrInternalServer)
+	}
+
+	id, err := h.service.Music.Add(msc)
+	if err != nil {
+		if errors.Is(err, music.ErrMusicAlreadyExists) {
+			responses.NewErrorResponse(ctx, http.StatusConflict, ErrAlreadyExists)
+			return
+		}
+		responses.NewErrorResponse(ctx, http.StatusInternalServerError, ErrInternalServer)
 		return
 	}
 
-	c.JSON(http.StatusOK,
+	ctx.JSON(http.StatusOK,
 		responses.SuccessID{
 			ID: id,
 		},
@@ -70,7 +88,7 @@ func (h *Handler) AddMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body services.MusicToUpdate true "Music info to update"
+// @Param input body services.MusicToUpdate true "Music externalApi to update"
 // @Success 200 {object} responses.SuccessStatus
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 404 {object} responses.ErrorResponse
@@ -106,7 +124,7 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body services.MusicToPartialUpdate true "Music info to update"
+// @Param input body services.MusicToPartialUpdate true "Music externalApi to update"
 // @Success 200 {object} responses.SuccessStatus
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 404 {object} responses.ErrorResponse
@@ -267,7 +285,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @Success 200 {object} models.Music
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /info [get]
+// @Router /api/externalApi [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")

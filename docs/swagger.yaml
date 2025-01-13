@@ -135,7 +135,7 @@ paths:
       description: Create a new music
       operationId: create-music
       parameters:
-      - description: Music info to add
+      - description: Music externalApi to add
         in: body
         name: input
         required: true
@@ -338,7 +338,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Music info to update
+      - description: Music externalApi to update
         in: body
         name: input
         required: true
@@ -381,7 +381,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Music info to update
+      - description: Music externalApi to update
         in: body
         name: input
         required: true

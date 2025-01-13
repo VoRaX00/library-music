@@ -3,6 +3,7 @@ package music
 import (
 	"errors"
 	"fmt"
+	"library-music/internal/domain/models"
 	"library-music/internal/services"
 	"library-music/internal/storage/music"
 	"library-music/pkg/mapper"
@@ -29,26 +30,19 @@ func New(log *slog.Logger, repo Repo) *Music {
 	}
 }
 
-func (s *Music) Add(music services.MusicToAdd) (int, error) {
+func (s *Music) Add(music models.Music) (int, error) {
 	const op = "music.Add"
 	log := s.log.With(
 		slog.String("op", op),
 	)
 
-	data, err := s.mapper.AddToMusic(music)
-	if err != nil {
-		log.Info("error mapping", err.Error())
-		return 0, fmt.Errorf("%s: %w", op, err)
-	}
-
 	log.Info("adding a song")
-	id, err := s.repo.Add(data)
+	id, err := s.repo.Add(music)
 	if err != nil {
 		if errors.Is(err, musicrepo.ErrMusicAlreadyExists) {
 			log.Warn("music already exists", err.Error())
 			return 0, fmt.Errorf("%s: %w", op, ErrMusicAlreadyExists)
 		}
-
 		log.Error("failed to add a song", err.Error())
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -133,7 +127,7 @@ func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.
 	return arr, nil
 }
 
-func (s *Music) Get(song, group string) (services.MusicInfo, error) {
+func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	const op = "music.Get"
 	log := s.log.With(
 		slog.String("op", op),
@@ -144,13 +138,13 @@ func (s *Music) Get(song, group string) (services.MusicInfo, error) {
 	if err != nil {
 		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Warn("music not found", err.Error())
-			return services.MusicInfo{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
+			return services.MusicToGet{}, fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 		}
 		log.Error("failed to get a song", err.Error())
-		return services.MusicInfo{}, fmt.Errorf("%s: %w", op, err)
+		return services.MusicToGet{}, fmt.Errorf("%s: %w", op, err)
 	}
 	log.Info("successfully fetched a song")
-	return s.mapper.MusicForInfo(music), nil
+	return s.mapper.MusicForGet(music), nil
 }
 
 func (s *Music) GetText(song, group string, page int) (string, error) {

@@ -22,7 +22,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	api := router.Group("/")
+	api := router.Group("/api")
 	{
 		api.POST("/add", h.AddMusic)
 		api.PUT("/update", h.UpdateMusic)
@@ -32,5 +32,6 @@ func (h *Handler) InitRouter() *gin.Engine {
 		api.GET("/getAll", h.GetMusicList)
 		api.GET("/getText", h.GetTextMusic)
 	}
+
 	return router
 }

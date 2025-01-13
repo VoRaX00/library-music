@@ -6,7 +6,7 @@ import "github.com/swaggo/swag"
 const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
-    "info": {
+    "externalApi": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
@@ -31,7 +31,7 @@ const docTemplate = `{
                 "operationId": "create-music",
                 "parameters": [
                     {
-                        "description": "Music info to add",
+                        "description": "Music externalApi to add",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -253,7 +253,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/info": {
+        "/api/externalApi": {
             "get": {
                 "description": "get music",
                 "consumes": [
@@ -334,7 +334,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Music info to update",
+                        "description": "Music externalApi to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -398,7 +398,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Music info to update",
+                        "description": "Music externalApi to update",
                         "name": "input",
                         "in": "body",
                         "required": true,

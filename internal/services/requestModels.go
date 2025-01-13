@@ -6,12 +6,15 @@ import (
 	"time"
 )
 
+type SongDetail struct {
+	ReleaseDate string `json:"release_date"`
+	Text        string `json:"text"`
+	Link        string `json:"link"`
+}
+
 type MusicToAdd struct {
-	Song  string `json:"song" validate:"required"`
-	Group string `json:"group" validate:"required"`
-	//Text        string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	//Link        string `json:"link" db:"link" validate:"required,url" example:"https://example.com"`
-	//ReleaseDate string `json:"releaseDate" db:"release_date" validate:"required,datetime" example:"DD.MM.YYYY"`
+	Song  string `json:"song,omitempty" validate:"required"`
+	Group string `json:"group,omitempty" validate:"required"`
 }
 
 type MusicToUpdate struct {
@@ -23,11 +26,11 @@ type MusicToUpdate struct {
 }
 
 type MusicToPartialUpdate struct {
-	Song        *string `json:"song,omitempty" db:"song" validate:"omitempty"`
-	Group       *string `json:"group,omitempty" db:"group" validate:"omitempty"`
-	Text        *string `json:"text,omitempty" db:"text_song" validate:"omitempty"`
-	Link        *string `json:"link,omitempty" db:"link" validate:"omitempty,url" example:"https://example.com"`
-	ReleaseDate *string `json:"releaseDate,omitempty" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
+	Song        string `json:"song,omitempty" validate:"omitempty"`
+	Group       string `json:"group,omitempty" validate:"omitempty"`
+	Text        string `json:"text,omitempty" validate:"omitempty"`
+	Link        string `json:"link,omitempty" validate:"omitempty,url" example:"https://example.com"`
+	ReleaseDate string `json:"releaseDate,omitempty" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 
 func (m *MusicToPartialUpdate) ParsePartial() MusicToUpdate {
@@ -42,12 +45,6 @@ func (m *MusicToPartialUpdate) ParsePartial() MusicToUpdate {
 		}
 	}
 	return update
-}
-
-type MusicInfo struct {
-	ReleaseDate string `json:"releaseDate" example:"16.07.2006"`
-	Text        string `json:"text"`
-	Link        string `json:"link" example:"https://www.youtube.com/watch?v=Xsp3_a-PMTw"`
 }
 
 type MusicToGet struct {
