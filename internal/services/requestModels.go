@@ -13,15 +13,15 @@ type SongDetail struct {
 }
 
 type MusicToAdd struct {
-	Song  string `json:"song,omitempty" validate:"required"`
-	Group string `json:"group,omitempty" validate:"required"`
+	Song  string `json:"song"`
+	Group string `json:"group"`
 }
 
 type MusicToUpdate struct {
-	Song        string `json:"song,required" db:"song" validate:"required"`
-	Group       string `json:"group,required" db:"group" validate:"required"`
-	Text        string `json:"text,required" db:"text_song" validate:"required"`
-	Link        string `json:"link,required" db:"link" validate:"required,url" example:"https://example.com"`
+	Song        string `json:"song,required" validate:"required"`
+	Group       string `json:"group,required" validate:"required"`
+	Text        string `json:"text,required" validate:"required"`
+	Link        string `json:"link,required" validate:"required,url" example:"https://example.com"`
 	ReleaseDate string `json:"releaseDate,required" db:"release_date" validate:"omitempty,datetime" example:"DD.MM.YYYY"`
 }
 

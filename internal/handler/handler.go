@@ -28,9 +28,9 @@ func (h *Handler) InitRouter() *gin.Engine {
 		api.PUT("/update", h.UpdateMusic)
 		api.PATCH("/update", h.UpdatePartialMusic)
 		api.DELETE("/delete", h.DeleteMusic)
-		api.GET("/info", h.GetMusic)
-		api.GET("/getAll", h.GetMusicList)
-		api.GET("/getText", h.GetTextMusic)
+		api.GET("/getMusic", h.GetMusic)
+		api.GET("/getAll:page", h.GetAllMusic)
+		api.GET("/getText:page", h.GetTextMusic)
 	}
 
 	return router

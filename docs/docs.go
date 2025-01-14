@@ -6,7 +6,7 @@ import "github.com/swaggo/swag"
 const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
-    "externalApi": {
+    "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
@@ -119,7 +119,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/getAll": {
+        "/api/getAllMusic/{page}": {
             "get": {
                 "description": "get all music",
                 "consumes": [
@@ -131,7 +131,7 @@ const docTemplate = `{
                 "tags": [
                     "music"
                 ],
-                "summary": "GetMusicList",
+                "summary": "GetAllMusic",
                 "operationId": "get-all-music",
                 "parameters": [
                     {
@@ -166,8 +166,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "Count songs",
+                        "name": "countSongs",
                         "in": "query",
                         "required": true
                     }
@@ -194,7 +194,59 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/getText": {
+        "/api/getMusic": {
+            "get": {
+                "description": "get music",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "music"
+                ],
+                "summary": "GetMusic",
+                "operationId": "get-music",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Music group",
+                        "name": "group",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Song name",
+                        "name": "song",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Music"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/getText/{page}": {
             "get": {
                 "description": "get text music",
                 "consumes": [
@@ -225,8 +277,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "Count verse",
+                        "name": "countVerse",
                         "in": "query",
                         "required": true
                     }
@@ -240,64 +292,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/externalApi": {
-            "get": {
-                "description": "get music",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "music"
-                ],
-                "summary": "GetMusic",
-                "operationId": "get-music",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Song name",
-                        "name": "song",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Music group",
-                        "name": "group",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Music"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -524,28 +518,11 @@ const docTemplate = `{
         },
         "services.MusicToAdd": {
             "type": "object",
-            "required": [
-                "group",
-                "link",
-                "releaseDate",
-                "song"
-            ],
             "properties": {
                 "group": {
                     "type": "string"
                 },
-                "link": {
-                    "type": "string",
-                    "example": "https://example.com"
-                },
-                "releaseDate": {
-                    "type": "string",
-                    "example": "DD.MM.YYYY"
-                },
                 "song": {
-                    "type": "string"
-                },
-                "text": {
                     "type": "string"
                 }
             }
@@ -561,11 +538,11 @@ const docTemplate = `{
                 },
                 "link": {
                     "type": "string",
-                    "example": "https://example.com"
+                    "example": "https://www.youtube.com/watch?v=Xsp3_a-PMTw"
                 },
                 "releaseDate": {
                     "type": "string",
-                    "example": "DD.MM.YYYY"
+                    "example": "16.07.2006"
                 },
                 "song": {
                     "type": "string"

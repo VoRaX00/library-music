@@ -55,21 +55,8 @@ definitions:
     properties:
       group:
         type: string
-      link:
-        example: https://example.com
-        type: string
-      releaseDate:
-        example: DD.MM.YYYY
-        type: string
       song:
         type: string
-      text:
-        type: string
-    required:
-    - group
-    - link
-    - releaseDate
-    - song
     type: object
   services.MusicToGet:
     properties:
@@ -78,10 +65,10 @@ definitions:
       id:
         type: integer
       link:
-        example: https://example.com
+        example: https://www.youtube.com/watch?v=Xsp3_a-PMTw
         type: string
       releaseDate:
-        example: DD.MM.YYYY
+        example: 16.07.2006
         type: string
       song:
         type: string
@@ -197,7 +184,7 @@ paths:
       summary: DeleteMusic
       tags:
       - music
-  /api/getAll:
+  /api/getAllMusic/{page}:
     get:
       consumes:
       - application/json
@@ -224,9 +211,9 @@ paths:
         in: query
         name: releaseDate
         type: string
-      - description: Page number
+      - description: Count songs
         in: query
-        name: page
+        name: countSongs
         required: true
         type: integer
       produces:
@@ -244,10 +231,45 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: GetMusicList
+      summary: GetAllMusic
       tags:
       - music
-  /api/getText:
+  /api/getMusic:
+    get:
+      consumes:
+      - application/json
+      description: get music
+      operationId: get-music
+      parameters:
+      - description: Music group
+        in: query
+        name: group
+        required: true
+        type: string
+      - description: Song name
+        in: query
+        name: song
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Music'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: GetMusic
+      tags:
+      - music
+  /api/getText/{page}:
     get:
       consumes:
       - application/json
@@ -264,9 +286,9 @@ paths:
         name: group
         required: true
         type: string
-      - description: Page number
+      - description: Count verse
         in: query
-        name: page
+        name: countVerse
         required: true
         type: integer
       produces:
@@ -285,45 +307,6 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: GetTextMusic
-      tags:
-      - music
-  /api/info:
-    get:
-      consumes:
-      - application/json
-      description: get music
-      operationId: get-music
-      parameters:
-      - description: Song name
-        in: query
-        name: song
-        required: true
-        type: string
-      - description: Music group
-        in: query
-        name: group
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Music'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: GetMusic
       tags:
       - music
   /api/update:

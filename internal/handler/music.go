@@ -210,7 +210,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 	})
 }
 
-// @Summary GetMusicList
+// @Summary GetAllMusic
 // @Tags music
 // @Description get all music
 // @ID get-all-music
@@ -221,12 +221,12 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Param link query string false "Link song"
 // @Param text query string false "Text song"
 // @Param releaseDate query string false "Release date" example:"DD.MM.YYYY"
-// @Param page query int true "Page number"
+// @Param countSongs query int true "Count songs"
 // @Success 200 {object} responses.SuccessMusics
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/getAll [get]
-func (h *Handler) GetMusicList(c *gin.Context) {
+// @Router /api/getAllMusic/{page} [get]
+func (h *Handler) GetAllMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
 	link := c.Query("link")
@@ -253,13 +253,13 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	}
 
 	filters := services.NewMusicFilterParams(song, group, text, link, date)
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil || page < 0 {
+	countSongs, err := strconv.Atoi(c.Query("countVerse"))
+	if err != nil || countSongs <= 0 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	musics, err := h.service.Music.GetAll(filters, page)
+	musics, err := h.service.Music.GetAll(filters, countSongs)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			responses.NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
@@ -285,7 +285,7 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 // @Success 200 {object} models.Music
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/externalApi [get]
+// @Router /api/getMusic [get]
 func (h *Handler) GetMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
@@ -310,21 +310,21 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Produce json
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
-// @Param page query int true "Page number"
+// @Param countVerse query int true "Count verse"
 // @Success 200 {object} responses.SuccessText
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/getText [get]
+// @Router /api/getText/{page} [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	song := c.Query("song")
 	group := c.Query("group")
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil || page < 0 {
+	countVerse, err := strconv.Atoi(c.Query("countVerse"))
+	if err != nil || countVerse <= 0 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	text, err := h.service.Music.GetText(song, group, page)
+	text, err := h.service.Music.GetText(song, group, countVerse)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)

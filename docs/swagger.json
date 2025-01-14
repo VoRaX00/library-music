@@ -25,7 +25,7 @@
                 "operationId": "create-music",
                 "parameters": [
                     {
-                        "description": "Music info to add",
+                        "description": "Music externalApi to add",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -113,7 +113,7 @@
                 }
             }
         },
-        "/api/getAll": {
+        "/api/getAllMusic/{page}": {
             "get": {
                 "description": "get all music",
                 "consumes": [
@@ -125,7 +125,7 @@
                 "tags": [
                     "music"
                 ],
-                "summary": "GetMusicList",
+                "summary": "GetAllMusic",
                 "operationId": "get-all-music",
                 "parameters": [
                     {
@@ -160,8 +160,8 @@
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "Count songs",
+                        "name": "countSongs",
                         "in": "query",
                         "required": true
                     }
@@ -188,7 +188,59 @@
                 }
             }
         },
-        "/api/getText": {
+        "/api/getMusic": {
+            "get": {
+                "description": "get music",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "music"
+                ],
+                "summary": "GetMusic",
+                "operationId": "get-music",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Music group",
+                        "name": "group",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Song name",
+                        "name": "song",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Music"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/getText/{page}": {
             "get": {
                 "description": "get text music",
                 "consumes": [
@@ -219,8 +271,8 @@
                     },
                     {
                         "type": "integer",
-                        "description": "Page number",
-                        "name": "page",
+                        "description": "Count verse",
+                        "name": "countVerse",
                         "in": "query",
                         "required": true
                     }
@@ -234,64 +286,6 @@
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/info": {
-            "get": {
-                "description": "get music",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "music"
-                ],
-                "summary": "GetMusic",
-                "operationId": "get-music",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Song name",
-                        "name": "song",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Music group",
-                        "name": "group",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Music"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -328,7 +322,7 @@
                         "required": true
                     },
                     {
-                        "description": "Music info to update",
+                        "description": "Music externalApi to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -392,7 +386,7 @@
                         "required": true
                     },
                     {
-                        "description": "Music info to update",
+                        "description": "Music externalApi to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -518,28 +512,11 @@
         },
         "services.MusicToAdd": {
             "type": "object",
-            "required": [
-                "group",
-                "link",
-                "releaseDate",
-                "song"
-            ],
             "properties": {
                 "group": {
                     "type": "string"
                 },
-                "link": {
-                    "type": "string",
-                    "example": "https://example.com"
-                },
-                "releaseDate": {
-                    "type": "string",
-                    "example": "DD.MM.YYYY"
-                },
                 "song": {
-                    "type": "string"
-                },
-                "text": {
                     "type": "string"
                 }
             }
@@ -555,11 +532,11 @@
                 },
                 "link": {
                     "type": "string",
-                    "example": "https://example.com"
+                    "example": "https://www.youtube.com/watch?v=Xsp3_a-PMTw"
                 },
                 "releaseDate": {
                     "type": "string",
-                    "example": "DD.MM.YYYY"
+                    "example": "16.07.2006"
                 },
                 "song": {
                     "type": "string"
