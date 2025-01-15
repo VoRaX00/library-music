@@ -57,9 +57,9 @@ func (h *Handler) AddMusic(ctx *gin.Context) {
 	}
 
 	if songDetails.ReleaseDate != "" {
-		msc.ReleaseDate, err = time.Parse("2006-01-02", songDetails.ReleaseDate)
+		msc.ReleaseDate, err = time.Parse("02.01.2006", songDetails.ReleaseDate)
 		if err != nil {
-			responses.NewErrorResponse(ctx, http.StatusInternalServerError, ErrInternalServer)
+			responses.NewErrorResponse(ctx, http.StatusBadRequest, ErrInvalidArguments)
 			return
 		}
 	}
@@ -322,7 +322,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Success 200 {object} responses.SuccessText
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/getText/{page} [get]
+// @Router /api/getTextMusic/{page} [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
 	page, err := strconv.Atoi(c.Param("page"))
 	if err != nil || page < 1 {

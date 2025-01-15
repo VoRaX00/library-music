@@ -6,4 +6,4 @@ db:
   name: "library-music"
   username: "postgres"
   ssl_mode: "disable"
-env: "local"
+env: "prod"

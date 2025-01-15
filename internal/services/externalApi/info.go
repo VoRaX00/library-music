@@ -28,25 +28,47 @@ func (s *ExternalApi) Info(song, group string) (services.SongDetail, error) {
 		slog.String("group", group),
 	)
 
+	log.Debug(
+		"remade song",
+		slog.String("song", song),
+		slog.String("group", group),
+	)
+
 	log.Info("getting info")
 	var info services.SongDetail
 	resp, err := s.FetchInfo(group, song)
+
 	if err != nil {
+		log.Error("error fetching info", slog.String("err", err.Error()))
 		return services.SongDetail{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	if resp == nil {
-		log.Warn("The api request did not return anything")
-	} else if resp.StatusCode != http.StatusOK {
-		log.Warn(fmt.Sprintf("The api request ended with the code %d", resp.StatusCode))
-	} else {
-		defer resp.Body.Close()
-		err = json.NewDecoder(resp.Body).Decode(&info)
-		if err != nil {
-			return services.SongDetail{}, fmt.Errorf("%s: %w", op, err)
-		}
+		log.Error("The api request did not return anything")
+		return services.SongDetail{}, fmt.Errorf("%s: %s", op, "empty request")
 	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Error(fmt.Sprintf("The api request ended with the code %d", resp.StatusCode))
+		return services.SongDetail{}, fmt.Errorf("%s: %s", op, "status not OK")
+	}
+
+	defer resp.Body.Close()
+	log.Debug("response", resp.Body)
+
+	err = json.NewDecoder(resp.Body).Decode(&info)
+	if err != nil {
+		log.Error("error decoding info", slog.String("err", err.Error()))
+		return services.SongDetail{}, fmt.Errorf("%s: %w", op, err)
+	}
+
 	log.Info("info received")
+	log.Debug(
+		"info for song",
+		slog.String("text", info.Text),
+		slog.String("releaseDate", info.ReleaseDate),
+		slog.String("link", info.Link),
+	)
 	return info, nil
 }
 

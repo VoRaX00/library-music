@@ -274,7 +274,7 @@ paths:
       summary: GetMusic
       tags:
       - music
-  /api/getText/{page}:
+  /api/getTextMusic/{page}:
     get:
       consumes:
       - application/json

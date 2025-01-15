@@ -253,7 +253,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/getText/{page}": {
+        "/api/getTextMusic/{page}": {
             "get": {
                 "description": "get text music",
                 "consumes": [
