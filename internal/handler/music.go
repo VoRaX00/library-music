@@ -11,7 +11,6 @@ import (
 	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 const (
@@ -24,11 +23,11 @@ const (
 
 // @Summary AddMusic
 // @Tags music
-// @Description Create a new music
+// @Description A method for creating a new song
 // @ID create-music
 // @Accept json
 // @Produce json
-// @Param input body services.MusicToAdd true "Music externalApi to add"
+// @Param input body services.MusicToAdd true "Music info to add"
 // @Success 200 {object} responses.SuccessID
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 409 {object} responses.ErrorResponse
@@ -56,12 +55,9 @@ func (h *Handler) AddMusic(ctx *gin.Context) {
 		Link: songDetails.Link,
 	}
 
-	if songDetails.ReleaseDate != "" {
-		msc.ReleaseDate, err = time.Parse("02.01.2006", songDetails.ReleaseDate)
-		if err != nil {
-			responses.NewErrorResponse(ctx, http.StatusBadRequest, ErrInvalidArguments)
-			return
-		}
+	if err = validateParams(msc); err != nil {
+		responses.NewErrorResponse(ctx, http.StatusBadRequest, ErrInvalidArguments)
+		return
 	}
 
 	id, err := h.service.Music.Add(msc)
@@ -83,12 +79,12 @@ func (h *Handler) AddMusic(ctx *gin.Context) {
 
 // @Summary UpdateMusic
 // @Tags music
-// @Description update music
+// @Description A method for fully updating song parameters
 // @ID update-music
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body services.MusicToUpdate true "Music externalApi to update"
+// @Param input body services.MusicToUpdate true "Music to update"
 // @Success 200 {object} responses.SuccessStatus
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 404 {object} responses.ErrorResponse
@@ -98,7 +94,7 @@ func (h *Handler) AddMusic(ctx *gin.Context) {
 func (h *Handler) UpdateMusic(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil || id < 0 {
-		responses.NewErrorResponse(c, http.StatusBadRequest, "invalid id")
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
@@ -119,12 +115,12 @@ func (h *Handler) UpdateMusic(c *gin.Context) {
 
 // @Summary UpdatePartialMusic
 // @Tags music
-// @Description update partial music
+// @Description A method for updating some song parameters
 // @ID update-partial-music
 // @Accept json
 // @Produce json
 // @Param id query int true "Id song"
-// @Param input body services.MusicToPartialUpdate true "Music externalApi to update"
+// @Param input body services.MusicToPartialUpdate true "Music info to update"
 // @Success 200 {object} responses.SuccessStatus
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 404 {object} responses.ErrorResponse
@@ -178,7 +174,7 @@ func (h *Handler) defaultUpdate(c *gin.Context, upd services.MusicToUpdate, id i
 
 // @Summary DeleteMusic
 // @Tags music
-// @Description delete music
+// @Description Method for deleting a song
 // @ID delete-music
 // @Accept json
 // @Produce json
@@ -212,11 +208,11 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 
 // @Summary GetAllMusic
 // @Tags music
-// @Description get all music
+// @Description A method for getting all songs with the ability to filter and paginate
 // @ID get-all-music
 // @Accept json
 // @Produce json
-// @Param page path int true "Page number"
+// @Param page query int true "Page number"
 // @Param song query string false "Song name"
 // @Param group query string false "Music group"
 // @Param link query string false "Link song"
@@ -228,38 +224,24 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Failure 500 {object} responses.ErrorResponse
 // @Router /api/getAllMusic/{page} [get]
 func (h *Handler) GetAllMusic(c *gin.Context) {
-	page, err := strconv.Atoi(c.Param("page"))
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil || page < 1 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	song := c.Query("song")
-	group := c.Query("group")
-	link := c.Query("link")
-	text := c.Query("text")
-
-	if link != "" {
-		validate := validator.New()
-		err := validate.Var(link, "url")
-		if err != nil {
-			responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
-			return
-		}
+	filters := services.MusicFilterParams{
+		Song:        c.Query("song"),
+		Group:       c.Query("group"),
+		Link:        c.Query("link"),
+		ReleaseDate: c.Query("releaseDate"),
 	}
 
-	inputDate := c.Query("releaseDate")
-	var date time.Time
-	if inputDate != "" {
-		var err error
-		date, err = time.Parse("02.01.2006", inputDate)
-		if err != nil {
-			responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
-			return
-		}
+	if err = validateParams(filters); err != nil {
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
 	}
 
-	filters := services.NewMusicFilterParams(song, group, text, link, date)
 	countSongs, err := strconv.Atoi(c.Query("countSongs"))
 	if err != nil || countSongs < 1 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
@@ -283,7 +265,7 @@ func (h *Handler) GetAllMusic(c *gin.Context) {
 
 // @Summary GetMusic
 // @Tags music
-// @Description get music
+// @Description A method for getting information about a specific song
 // @ID get-music
 // @Accept json
 // @Produce json
@@ -311,20 +293,20 @@ func (h *Handler) GetMusic(c *gin.Context) {
 
 // @Summary GetTextMusic
 // @Tags music
-// @Description get text music
+// @Description A method for getting the lyrics of a song
 // @ID get-text-music
 // @Accept json
 // @Produce json
-// @Param page path int true "Page number"
+// @Param page query int true "Page number"
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
 // @Param countVerse query int true "Count verse"
 // @Success 200 {object} responses.SuccessText
 // @Failure 400 {object} responses.ErrorResponse
 // @Failure 500 {object} responses.ErrorResponse
-// @Router /api/getTextMusic/{page} [get]
+// @Router /api/getTextMusic [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
-	page, err := strconv.Atoi(c.Param("page"))
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil || page < 1 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
@@ -355,17 +337,7 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 
 func validateParams(value interface{}) error {
 	validate := validator.New()
-
-	err := validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
-		_, err := time.Parse("02.01.2006", fl.Field().String())
-		return err == nil
-	})
-
-	if err != nil {
-		return fmt.Errorf(ErrInternalServer)
-	}
-
-	err = validate.Struct(value)
+	err := validate.Struct(value)
 	if err != nil {
 		return fmt.Errorf(ErrInvalidArguments)
 	}

@@ -152,7 +152,7 @@ func (s *Music) GetAll(params services.MusicFilterParams, countSongs, page int) 
 		slog.String("group", params.Group),
 		slog.String("text", params.Text),
 		slog.String("link", params.Link),
-		slog.String("releaseData", params.ReleaseDate.String()),
+		slog.String("releaseData", params.ReleaseDate),
 		slog.String("countSongs", strconv.FormatInt(int64(countSongs), 10)),
 		slog.String("page", strconv.FormatInt(int64(page), 10)),
 	)

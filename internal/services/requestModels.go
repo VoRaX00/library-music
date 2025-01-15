@@ -3,7 +3,6 @@ package services
 import (
 	"library-music/internal/domain/models"
 	"reflect"
-	"time"
 )
 
 type SongDetail struct {
@@ -56,19 +55,19 @@ type MusicToGet struct {
 }
 
 type MusicFilterParams struct {
-	Song        string    `json:"song"`
-	Group       string    `json:"group"`
-	Text        string    `json:"text"`
-	Link        string    `json:"link" example:"https://example.com"`
-	ReleaseDate time.Time `json:"releaseDate" example:"DD.MM.YYYY"`
+	Song        string `json:"song,omitempty" validate:"omitempty"`
+	Group       string `json:"group,omitempty" validate:"omitempty"`
+	Text        string `json:"text,omitempty" validate:"omitempty"`
+	Link        string `json:"link,omitempty" validate:"omitempty,url" example:"https://example.com"`
+	ReleaseDate string `json:"releaseDate" validate:"omitempty,datetime=02.01.2006" example:"DD.MM.YYYY"`
 }
 
-func NewMusicFilterParams(song, group, text, link string, releaseDate time.Time) MusicFilterParams {
-	return MusicFilterParams{
-		Song:        song,
-		Group:       group,
-		Text:        text,
-		Link:        link,
-		ReleaseDate: releaseDate,
-	}
-}
+//func NewMusicFilterParams(song, group, text, link string, releaseDate time.Time) MusicFilterParams {
+//	return MusicFilterParams{
+//		Song:        song,
+//		Group:       group,
+//		Text:        text,
+//		Link:        link,
+//		ReleaseDate: releaseDate,
+//	}
+//}

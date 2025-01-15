@@ -10,12 +10,13 @@ type MusicMapper struct {
 }
 
 func (m *MusicMapper) FilterToMusic(object services.MusicFilterParams) models.Music {
+	date, _ := time.Parse("02.01.2006", object.ReleaseDate)
 	return models.Music{
 		Song:        object.Song,
 		Group:       models.Group{Name: object.Group},
 		Text:        object.Text,
 		Link:        object.Link,
-		ReleaseDate: object.ReleaseDate,
+		ReleaseDate: date,
 	}
 }
 

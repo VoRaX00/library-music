@@ -119,10 +119,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new music
+      description: A method for creating a new song
       operationId: create-music
       parameters:
-      - description: Music externalApi to add
+      - description: Music info to add
         in: body
         name: input
         required: true
@@ -154,7 +154,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: delete music
+      description: Method for deleting a song
       operationId: delete-music
       parameters:
       - description: Id song
@@ -188,11 +188,11 @@ paths:
     get:
       consumes:
       - application/json
-      description: get all music
+      description: A method for getting all songs with the ability to filter and paginate
       operationId: get-all-music
       parameters:
       - description: Page number
-        in: path
+        in: query
         name: page
         required: true
         type: integer
@@ -243,7 +243,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get music
+      description: A method for getting information about a specific song
       operationId: get-music
       parameters:
       - description: Music group
@@ -274,15 +274,15 @@ paths:
       summary: GetMusic
       tags:
       - music
-  /api/getTextMusic/{page}:
+  /api/getTextMusic:
     get:
       consumes:
       - application/json
-      description: get text music
+      description: A method for getting the lyrics of a song
       operationId: get-text-music
       parameters:
       - description: Page number
-        in: path
+        in: query
         name: page
         required: true
         type: integer
@@ -323,7 +323,7 @@ paths:
     patch:
       consumes:
       - application/json
-      description: update partial music
+      description: A method for updating some song parameters
       operationId: update-partial-music
       parameters:
       - description: Id song
@@ -331,7 +331,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Music externalApi to update
+      - description: Music info to update
         in: body
         name: input
         required: true
@@ -366,7 +366,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: update music
+      description: A method for fully updating song parameters
       operationId: update-music
       parameters:
       - description: Id song
@@ -374,7 +374,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Music externalApi to update
+      - description: Music to update
         in: body
         name: input
         required: true

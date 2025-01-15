@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/add": {
             "post": {
-                "description": "Create a new music",
+                "description": "A method for creating a new song",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,7 +31,7 @@ const docTemplate = `{
                 "operationId": "create-music",
                 "parameters": [
                     {
-                        "description": "Music externalApi to add",
+                        "description": "Music info to add",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -70,7 +70,7 @@ const docTemplate = `{
         },
         "/api/delete": {
             "delete": {
-                "description": "delete music",
+                "description": "Method for deleting a song",
                 "consumes": [
                     "application/json"
                 ],
@@ -121,7 +121,7 @@ const docTemplate = `{
         },
         "/api/getAllMusic/{page}": {
             "get": {
-                "description": "get all music",
+                "description": "A method for getting all songs with the ability to filter and paginate",
                 "consumes": [
                     "application/json"
                 ],
@@ -138,7 +138,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Page number",
                         "name": "page",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -203,7 +203,7 @@ const docTemplate = `{
         },
         "/api/getMusic": {
             "get": {
-                "description": "get music",
+                "description": "A method for getting information about a specific song",
                 "consumes": [
                     "application/json"
                 ],
@@ -253,9 +253,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/getTextMusic/{page}": {
+        "/api/getTextMusic": {
             "get": {
-                "description": "get text music",
+                "description": "A method for getting the lyrics of a song",
                 "consumes": [
                     "application/json"
                 ],
@@ -272,7 +272,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Page number",
                         "name": "page",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -321,7 +321,7 @@ const docTemplate = `{
         },
         "/api/update": {
             "put": {
-                "description": "update music",
+                "description": "A method for fully updating song parameters",
                 "consumes": [
                     "application/json"
                 ],
@@ -342,7 +342,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Music externalApi to update",
+                        "description": "Music to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -385,7 +385,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "update partial music",
+                "description": "A method for updating some song parameters",
                 "consumes": [
                     "application/json"
                 ],
@@ -406,7 +406,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Music externalApi to update",
+                        "description": "Music info to update",
                         "name": "input",
                         "in": "body",
                         "required": true,
