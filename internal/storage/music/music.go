@@ -250,12 +250,10 @@ func (r *Music) GetById(id int) (models.Music, error) {
 	return music, nil
 }
 
-const pageSize = 5
-
-func (r *Music) GetAll(params models.Music, countVerses, page int) ([]models.Music, error) {
+func (r *Music) GetAll(params models.Music, countSongs, page int) ([]models.Music, error) {
 	const op = "storage.music.GetAll"
 	var musics []models.Music
-	query, args := generateQuery(params, page)
+	query, args := generateQuery(params, countSongs, page)
 	err := r.db.Select(&musics, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -267,7 +265,7 @@ func (r *Music) GetAll(params models.Music, countVerses, page int) ([]models.Mus
 	return musics, nil
 }
 
-func generateQuery(params models.Music, page int) (string, []interface{}) {
+func generateQuery(params models.Music, countSongs, page int) (string, []interface{}) {
 	query := `SELECT m.id, m.song, m.text_song, m.link, m.release_date, 
        g.id AS "group.id",
        g.name AS "group.name"
@@ -308,8 +306,8 @@ func generateQuery(params models.Music, page int) (string, []interface{}) {
 		isWhere = true
 	}
 
-	offset := (page - 1) * pageSize
-	query += fmt.Sprintf(" LIMIT %d OFFSET %d", pageSize, offset)
+	offset := (page - 1) * countSongs
+	query += fmt.Sprintf(" LIMIT %d OFFSET %d", countSongs, offset)
 	return query, args
 }
 
