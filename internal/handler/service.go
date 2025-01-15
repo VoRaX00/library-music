@@ -13,9 +13,9 @@ type Music interface {
 	Add(music models.Music) (int, error)
 	Delete(id int) error
 	Update(music services.MusicToUpdate, id int) error
-	GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error)
+	GetAll(params services.MusicFilterParams, countSongs, page int) ([]services.MusicToGet, error)
 	Get(song, group string) (services.MusicToGet, error)
-	GetText(song, group string, page int) (string, error)
+	GetText(song, group string, countVerse, page int) (string, error)
 }
 
 type ExternalApi interface {

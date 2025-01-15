@@ -252,7 +252,7 @@ func (r *Music) GetById(id int) (models.Music, error) {
 
 const pageSize = 5
 
-func (r *Music) GetAll(params models.Music, page int) ([]models.Music, error) {
+func (r *Music) GetAll(params models.Music, countVerses, page int) ([]models.Music, error) {
 	const op = "storage.music.GetAll"
 	var musics []models.Music
 	query, args := generateQuery(params, page)

@@ -135,6 +135,13 @@ const docTemplate = `{
                 "operationId": "get-all-music",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "description": "Song name",
                         "name": "song",
@@ -261,6 +268,13 @@ const docTemplate = `{
                 "summary": "GetTextMusic",
                 "operationId": "get-text-music",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Song name",

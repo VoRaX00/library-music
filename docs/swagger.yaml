@@ -191,6 +191,11 @@ paths:
       description: get all music
       operationId: get-all-music
       parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
       - description: Song name
         in: query
         name: song
@@ -276,6 +281,11 @@ paths:
       description: get text music
       operationId: get-text-music
       parameters:
+      - description: Page number
+        in: path
+        name: page
+        required: true
+        type: integer
       - description: Song name
         in: query
         name: song

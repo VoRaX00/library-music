@@ -103,14 +103,14 @@ func (s *Music) Update(music services.MusicToUpdate, id int) error {
 	return nil
 }
 
-func (s *Music) GetAll(params services.MusicFilterParams, page int) ([]services.MusicToGet, error) {
+func (s *Music) GetAll(params services.MusicFilterParams, countSongs, page int) ([]services.MusicToGet, error) {
 	const op = "music.GetAll"
 	log := s.log.With(
 		slog.String("op", op),
 	)
 
 	log.Info("fetching all songs")
-	res, err := s.repo.GetAll(s.mapper.FilterToMusic(params), page)
+	res, err := s.repo.GetAll(s.mapper.FilterToMusic(params), countSongs, page)
 	if err != nil {
 		if errors.Is(err, musicrepo.ErrMusicNotFound) {
 			log.Error("failed to get all songs", err.Error())
@@ -147,7 +147,7 @@ func (s *Music) Get(song, group string) (services.MusicToGet, error) {
 	return s.mapper.MusicForGet(music), nil
 }
 
-func (s *Music) GetText(song, group string, page int) (string, error) {
+func (s *Music) GetText(song, group string, countVerse, page int) (string, error) {
 	const op = "music.GetText"
 	log := s.log.With(
 		slog.String("op", op),
@@ -166,10 +166,14 @@ func (s *Music) GetText(song, group string, page int) (string, error) {
 	}
 
 	verses := strings.Split(text, "\n\n")
-	if len(verses) < page {
+	if len(verses)/countVerse < page {
 		log.Error("page is out of range")
 		return "", fmt.Errorf("%s: %w", op, ErrMusicNotFound)
 	}
 	log.Info("successfully fetched a song")
-	return verses[page-1], nil
+
+	start := countVerse * (page - 1)
+	end := countVerse*(page-1) + countVerse
+	result := strings.Join(verses[start:end], "\n\n")
+	return result, nil
 }

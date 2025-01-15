@@ -216,6 +216,7 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @ID get-all-music
 // @Accept json
 // @Produce json
+// @Param page path int true "Page number"
 // @Param song query string false "Song name"
 // @Param group query string false "Music group"
 // @Param link query string false "Link song"
@@ -227,6 +228,12 @@ func (h *Handler) DeleteMusic(c *gin.Context) {
 // @Failure 500 {object} responses.ErrorResponse
 // @Router /api/getAllMusic/{page} [get]
 func (h *Handler) GetAllMusic(c *gin.Context) {
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil || page < 1 {
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
 	song := c.Query("song")
 	group := c.Query("group")
 	link := c.Query("link")
@@ -253,13 +260,13 @@ func (h *Handler) GetAllMusic(c *gin.Context) {
 	}
 
 	filters := services.NewMusicFilterParams(song, group, text, link, date)
-	countSongs, err := strconv.Atoi(c.Query("countVerse"))
-	if err != nil || countSongs <= 0 {
+	countSongs, err := strconv.Atoi(c.Query("countSongs"))
+	if err != nil || countSongs < 1 {
 		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
 		return
 	}
 
-	musics, err := h.service.Music.GetAll(filters, countSongs)
+	musics, err := h.service.Music.GetAll(filters, countSongs, page)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			responses.NewErrorResponse(c, http.StatusBadRequest, ErrRecordNotFound)
@@ -308,6 +315,7 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @ID get-text-music
 // @Accept json
 // @Produce json
+// @Param page path int true "Page number"
 // @Param song query string true "Song name"
 // @Param group query string true "Music group"
 // @Param countVerse query int true "Count verse"
@@ -316,6 +324,12 @@ func (h *Handler) GetMusic(c *gin.Context) {
 // @Failure 500 {object} responses.ErrorResponse
 // @Router /api/getText/{page} [get]
 func (h *Handler) GetTextMusic(c *gin.Context) {
+	page, err := strconv.Atoi(c.Param("page"))
+	if err != nil || page < 1 {
+		responses.NewErrorResponse(c, http.StatusBadRequest, ErrInvalidArguments)
+		return
+	}
+
 	song := c.Query("song")
 	group := c.Query("group")
 	countVerse, err := strconv.Atoi(c.Query("countVerse"))
@@ -324,7 +338,7 @@ func (h *Handler) GetTextMusic(c *gin.Context) {
 		return
 	}
 
-	text, err := h.service.Music.GetText(song, group, countVerse)
+	text, err := h.service.Music.GetText(song, group, countVerse, page)
 	if err != nil {
 		if errors.Is(err, music.ErrMusicNotFound) {
 			responses.NewErrorResponse(c, http.StatusNotFound, ErrRecordNotFound)
