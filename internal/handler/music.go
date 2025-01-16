@@ -11,6 +11,7 @@ import (
 	"library-music/internal/services/music"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const (
@@ -46,13 +47,20 @@ func (h *Handler) AddMusic(ctx *gin.Context) {
 		return
 	}
 
+	releaseDate, err := time.Parse("02.01.2006", songDetails.ReleaseDate)
+	if err != nil {
+		responses.NewErrorResponse(ctx, http.StatusInternalServerError, ErrInternalServer)
+		return
+	}
+
 	msc := models.Music{
 		Song: input.Song,
 		Group: models.Group{
 			Name: input.Group,
 		},
-		Text: songDetails.Text,
-		Link: songDetails.Link,
+		Text:        songDetails.Text,
+		Link:        songDetails.Link,
+		ReleaseDate: releaseDate,
 	}
 
 	if err = validateParams(msc); err != nil {
